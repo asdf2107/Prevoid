@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Prevoid.View
 {
-    public static class MapRenderer
+    public class MapRenderer
     {
     }
 }
