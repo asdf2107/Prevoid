@@ -4,8 +4,12 @@ using System.Text;
 
 namespace Prevoid.Model
 {
-    public enum EffectType
+    public enum Scale
     {
-        DamageDubuff,
+        VeryBad,
+        Bad,
+        None,
+        Good,
+        VeryGood,
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Prevoid.Model
 {
     public class Map
     {
         public Unit[,] Fields { get; private set; }
+        public Structure[,] Structures { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
 
@@ -15,6 +15,14 @@ namespace Prevoid.Model
             Width = width;
             Height = height;
             Fields = new Unit[Width, Height];
+            Structures = new Structure[Width, Height];
+        }
+
+        public void SetStructure(Structure structure, int x, int y)
+        {
+            structure.X = x;
+            structure.Y = y;
+            Structures[x, y] = structure;
         }
 
         public List<(int, int)> GetArea(int x, int y, int range)
@@ -42,7 +50,20 @@ namespace Prevoid.Model
                 Add(x + 1, y - 1);
             }
 
-            if (range >= 3) throw new NotImplementedException();
+            if (range >= 3)
+            {
+                Add(x + 3, y);
+                Add(x - 3, y);
+                Add(x, y + 3);
+                Add(x, y - 3);
+
+                Add(x + 2, y + 2);
+                Add(x - 2, y - 2);
+                Add(x - 2, y + 2);
+                Add(x + 2, y - 2);
+            }
+
+            if (range >= 4) throw new NotImplementedException();
 
             return result;
 

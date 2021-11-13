@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Prevoid.Model
 {
-    public class Weapon
+    public abstract class Weapon
     {
         public int AttackRange { get; protected set; }
         public float Damage { get; protected set; }

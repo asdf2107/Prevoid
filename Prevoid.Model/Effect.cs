@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Prevoid.Model
 {
-    public class Effect
+    public abstract class Effect
     {
-        public EffectType Type { get; set; }
         /// <summary>
         /// Duration (in turns)
         /// </summary>
@@ -17,5 +16,7 @@ namespace Prevoid.Model
         {
             GM.TurnChanged += () => { if (Duration > 0) Duration--; };
         }
+
+        public abstract void MergeWith(Effect effect);
     }
 }
