@@ -1,7 +1,6 @@
 ﻿using Prevoid.View;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Prevoid.ViewModel
 {
@@ -11,7 +10,7 @@ namespace Prevoid.ViewModel
 
         static RenderHandler()
         {
-            // TODO: Add CommandHandler event handlers
+            // TODO: Add CommandHandler and GM Overlays event handlers
         }
     }
 }

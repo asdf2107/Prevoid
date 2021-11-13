@@ -6,7 +6,9 @@ namespace Prevoid.ViewModel
 {
     public enum SpriteType
     {
+        Translucent,
         Empty,
+        FogOfWar,
         Forest,
         Mountain,
         Water,

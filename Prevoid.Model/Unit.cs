@@ -65,10 +65,9 @@ namespace Prevoid.Model
         public void Destroy()
         {
             GM.Map.Fields[X, Y] = null;
-            throw new NotImplementedException(); // ?
         }
 
-        private float CalculateDamage()
+        protected virtual float CalculateDamage()
         {
             return GM.Random.NextFloat(Weapon.Damage * (1 - Constants.DamageDelta), Weapon.Damage * (1 + Constants.DamageDelta));
         }
