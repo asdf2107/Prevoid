@@ -1,6 +1,5 @@
 ﻿using Prevoid.ViewModel;
 using System;
-using System.Collections.Generic;
 
 namespace Prevoid.Model
 {

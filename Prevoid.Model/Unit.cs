@@ -1,7 +1,5 @@
 ﻿using Prevoid.Model.Commands;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Prevoid.Model
 {
@@ -31,12 +29,7 @@ namespace Prevoid.Model
 
         public void Move(int toX, int toY)
         {
-            GM.CommandHandler.HandleCommand(new MoveCommand()
-            {
-                Unit = this,
-                ToX = toX,
-                ToY = toY,
-            });
+            GM.CommandHandler.HandleCommand(new MoveCommand(this, toX, toY));
         }
 
         public virtual List<(int, int)> GetMoveArea()
@@ -46,14 +39,7 @@ namespace Prevoid.Model
 
         public void Attack(int atX, int atY)
         {
-            GM.CommandHandler.HandleCommand(new AttackCommand()
-            {
-                Unit = this,
-                AtX = atX,
-                AtY = atY,
-                Damage = CalculateDamage(),
-                DamageType = Weapon.DamageType,
-            });
+            GM.CommandHandler.HandleCommand(new AttackCommand(this, atX, atY, CalculateDamage(), Weapon.DamageType));
         }
 
         public virtual List<(int, int)> GetAttackArea()

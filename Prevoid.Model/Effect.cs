@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Prevoid.Model
+﻿namespace Prevoid.Model
 {
     public abstract class Effect
     {

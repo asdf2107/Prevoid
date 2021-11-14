@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Prevoid.View
+﻿namespace Prevoid.View
 {
     public class MapRenderer
     {
+        public Map Map { get; private set; }
+
+        public MapRenderer(Map map)
+        {
+
+        }
     }
 }

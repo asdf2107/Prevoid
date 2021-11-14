@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Prevoid.ConsoleController
+﻿namespace Prevoid.ConsoleController
 {
     class Program
     {

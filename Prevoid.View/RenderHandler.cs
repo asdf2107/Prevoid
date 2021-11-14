@@ -1,8 +1,4 @@
-﻿using Prevoid.View;
-using System;
-using System.Collections.Generic;
-
-namespace Prevoid.ViewModel
+﻿namespace Prevoid.View
 {
     public static class RenderHandler
     {
