@@ -1,12 +1,14 @@
 ﻿using Prevoid.Model.Commands;
+using Prevoid.ViewModel;
 using System.Collections.Generic;
 
 namespace Prevoid.Model
 {
-    public abstract class Unit : ILocateable, IHarmable
+    public abstract class Unit : ILocateable, IVisible, IHarmable
     {
         public int X { get; set; } = -1;
         public int Y { get; set; } = -1;
+        public SpriteType SpriteType { get; private set; }
         public Player Player { get; private set; }
         public bool CanMove { get => MoveRange > 0; }
         public int MoveRange { get; protected set; }
@@ -17,13 +19,14 @@ namespace Prevoid.Model
 
         protected List<Effect> _Effects = new List<Effect>();
 
-        public Unit(Player player, int moveRange, float maxHP, Weapon weapon = null)
+        public Unit(Player player, int moveRange, float maxHP, SpriteType spriteType, Weapon weapon = null)
         {
             Player = player;
 
             MoveRange = moveRange;
             MaxHp = maxHP;
             Hp = MaxHp;
+            SpriteType = spriteType;
             Weapon = weapon;
         }
 

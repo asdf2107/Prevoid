@@ -14,17 +14,26 @@ namespace Prevoid.View
             _DrawQueue.Enqueue(locatedSymbol);
         }
 
+        public void Draw(IEnumerable<LocatedSymbol> locatedSymbols)
+        {
+            foreach (var locatedSymbol in locatedSymbols)
+            {
+                _DrawQueue.Enqueue(locatedSymbol);
+            }
+        }
+
         public void DrawLoop()
         {
             while (true)
             {
-                PerformDraw(_DrawQueue.Dequeue());
+                if (_DrawQueue.Count > 0) 
+                    PerformDraw(_DrawQueue.Dequeue());
             }
         }
 
         private void PerformDraw(LocatedSymbol located)
         {
-            if (Console.ForegroundColor != located.Symbol.ForeColor)
+            if (Console.ForegroundColor != located.Symbol.ForeColor && !string.IsNullOrEmpty(located.Symbol.Text))
                 Console.ForegroundColor = located.Symbol.ForeColor;
 
             if (Console.BackgroundColor != located.Symbol.BackColor)

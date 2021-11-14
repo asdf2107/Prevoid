@@ -26,8 +26,10 @@ namespace Prevoid.View.Renderers
                     lineSymbols.Add(GetLocatedSymbolAt(i, j));
                 }
 
-                locatedSymbols.AddRange(lineSymbols.MergeConsecutive(Map.Width));
+                locatedSymbols.AddRange(lineSymbols.MergeConsecutive());
             }
+
+            _Drawer.Draw(locatedSymbols);
         }
 
         public void RenderField(int x, int y)
@@ -41,6 +43,24 @@ namespace Prevoid.View.Renderers
             {
                 RenderField(coord.Item1, coord.Item2);
             }
+        }
+
+        public void RenderOverlay(Overlay overlay)
+        {
+            foreach (var coord in overlay.GetFields())
+            {
+                _Drawer.Draw(new LocatedSymbol
+                {
+                    X = coord.Item1,
+                    Y = coord.Item2,
+                    Symbol = GetSymbol(overlay.Sprite),
+                });
+            }
+        }
+
+        public void HideOverlay(Overlay overlay)
+        {
+            RenderFields(overlay.GetFields());
         }
 
         private LocatedSymbol GetLocatedSymbolAt(int x, int y)
@@ -58,18 +78,16 @@ namespace Prevoid.View.Renderers
         {
             if (Map.Fields[x, y] != null)
             {
-
+                return GetSymbolFromSpriteType(Map.Fields[x, y].SpriteType);
             }
             else if (Map.Structures[x, y] != null)
             {
-
+                return GetSymbolFromSpriteType(Map.Structures[x, y].SpriteType);
             }
             else
             {
-
+                return GetSymbolFromSpriteType(SpriteType.Empty);
             }
-
-            return new Symbol();
         }
 
         private Symbol GetSymbol(Sprite sprite)
@@ -79,9 +97,25 @@ namespace Prevoid.View.Renderers
                 Text = sprite.Text,
             };
 
-            // TODO: Add logic
+            return result.MergeWith(GetSymbolFromSpriteType(sprite.Type));
+        }
 
-            return result;
+        private Symbol GetSymbolFromSpriteType(SpriteType spriteType)
+        {
+            return spriteType switch
+            {
+                SpriteType.Mountain => new Symbol
+                {
+                    ForeColor = Constants.MountainColor,
+                    BackColor = Constants.TerrainColor,
+                    Text = @"/\",
+                },
+                _ => new Symbol
+                {
+                    BackColor = Constants.TerrainColor,
+                    Text = string.Empty,
+                },
+            };
         }
     }
 }

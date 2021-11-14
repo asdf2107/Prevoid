@@ -6,15 +6,21 @@ namespace Prevoid.ViewModel
     public class Overlay
     {
         public event Action<Overlay> Changed;
+        public event Action<Overlay> Hidden;
 
         public OverlayType Type { get; private set; }
-        public SpriteType SpriteType { get; private set; }
+        public Sprite Sprite { get; private set; }
         private List<(int, int)> _Fields { get; set; } = new List<(int, int)>();
 
-        public Overlay(OverlayType type, SpriteType spriteType)
+        public Overlay(OverlayType type, Sprite sprite)
         {
             Type = type;
-            SpriteType = spriteType;
+            Sprite = sprite;
+        }
+
+        public IEnumerable<(int, int)> GetFields()
+        {
+            return _Fields.ToArray();
         }
 
         public void Add(IEnumerable<(int, int)> coords)
@@ -35,9 +41,14 @@ namespace Prevoid.ViewModel
             if (removed) Changed?.Invoke(this);
         }
 
-        public IEnumerable<(int, int)> GetFields()
+        public void Show()
         {
-            return _Fields.ToArray();
+            Changed?.Invoke(this);
+        }
+
+        public void Hide()
+        {
+            Hidden?.Invoke(this);
         }
     }
 }
