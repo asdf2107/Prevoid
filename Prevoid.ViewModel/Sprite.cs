@@ -1,8 +1,8 @@
 ﻿namespace Prevoid.ViewModel
 {
-    public class Sprite
+    public struct Sprite
     {
         public SpriteType Type { get; set; }
-        public char Info { get; set; }
+        public string Text { get; set; }
     }
 }

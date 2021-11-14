@@ -5,4 +5,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Prevoid.Model\Prevoid.Model.csproj" />
+    <ProjectReference Include="..\Prevoid.View\Prevoid.View.csproj" />
+  </ItemGroup>
+
 </Project>
