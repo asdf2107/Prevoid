@@ -9,5 +9,8 @@ namespace Prevoid.View
         public const ConsoleColor TerrainColor = ConsoleColor.Black;
 
         public const ConsoleColor MountainColor = ConsoleColor.Gray;
+
+        public const ConsoleColor BrightTextColor = ConsoleColor.White;
+        public const ConsoleColor DarkTextColor = ConsoleColor.Black;
     }
 }

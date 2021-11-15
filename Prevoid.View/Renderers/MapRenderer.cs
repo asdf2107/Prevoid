@@ -53,7 +53,7 @@ namespace Prevoid.View.Renderers
                 {
                     X = coord.Item1,
                     Y = coord.Item2,
-                    Symbol = GetSymbol(overlay.Sprite),
+                    Symbol = GetSymbol(overlay.Sprite, coord.Item1, coord.Item2),
                 });
             }
         }
@@ -73,31 +73,35 @@ namespace Prevoid.View.Renderers
             };
         }
 
-        // TODO: Add logic
         private Symbol GetSymbolAt(int x, int y)
+        {
+            return GetSymbolFromSpriteType(GetSpriteTypeAt(x, y));
+        }
+
+        private SpriteType GetSpriteTypeAt(int x, int y)
         {
             if (Map.Fields[x, y] != null)
             {
-                return GetSymbolFromSpriteType(Map.Fields[x, y].SpriteType);
+                return Map.Fields[x, y].SpriteType;
             }
             else if (Map.Structures[x, y] != null)
             {
-                return GetSymbolFromSpriteType(Map.Structures[x, y].SpriteType);
+                return Map.Structures[x, y].SpriteType;
             }
             else
             {
-                return GetSymbolFromSpriteType(SpriteType.Empty);
+                return SpriteType.Empty;
             }
         }
 
-        private Symbol GetSymbol(Sprite sprite)
+        private Symbol GetSymbol(Sprite sprite, int x, int y)
         {
             Symbol result = new Symbol
             {
                 Text = sprite.Text,
             };
 
-            return result.MergeWith(GetSymbolFromSpriteType(sprite.Type));
+            return result.MergeWith(GetSymbolFromSpriteType(sprite.Type == SpriteType.Translucent ? GetSpriteTypeAt(x, y) : sprite.Type));
         }
 
         private Symbol GetSymbolFromSpriteType(SpriteType spriteType)
