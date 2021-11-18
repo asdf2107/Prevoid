@@ -12,5 +12,6 @@ namespace Prevoid.View
 
         public const ConsoleColor BrightTextColor = ConsoleColor.White;
         public const ConsoleColor DarkTextColor = ConsoleColor.Black;
+        public const ConsoleColor SelectionColor = ConsoleColor.Cyan;
     }
 }

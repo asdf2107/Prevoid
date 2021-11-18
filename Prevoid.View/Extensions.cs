@@ -8,7 +8,7 @@ namespace Prevoid.View
     {
         public static List<LocatedSymbol> MergeConsecutive(this IEnumerable<LocatedSymbol> locatedSymbols)
         {
-            var ordered = locatedSymbols.OrderBy(locSymb => locSymb.X).ToList();
+            var ordered = locatedSymbols.OrderBy(locSymb => locSymb.ScreenX).ToList();
             var res = new List<LocatedSymbol>();
 
             int currentHead = 0;

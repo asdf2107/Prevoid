@@ -15,7 +15,12 @@ namespace Prevoid.ConsoleController
 
             GM.Map.SetStructure(new Mountain(), 15, 15);
             GM.NextTurn();
-            Console.ReadKey();
+
+            bool goOn = true;
+            while (goOn)
+            {
+                goOn = GM.HandleInput(Console.ReadKey(true));
+            }
         }
     }
 }

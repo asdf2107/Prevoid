@@ -7,7 +7,7 @@ namespace Prevoid.View
 {
     public class ScreenDrawer
     {
-        private readonly Queue<LocatedSymbol> _DrawQueue = new Queue<LocatedSymbol>();
+        private readonly ConcurrentQueue<LocatedSymbol> _DrawQueue = new ConcurrentQueue<LocatedSymbol>();
 
         public void Draw(LocatedSymbol locatedSymbol)
         {
@@ -26,8 +26,11 @@ namespace Prevoid.View
         {
             while (true)
             {
-                if (_DrawQueue.Count > 0) 
-                    PerformDraw(_DrawQueue.Dequeue());
+                if (_DrawQueue.Count > 0)
+                {
+                    bool success = _DrawQueue.TryDequeue(out LocatedSymbol locatedSymbol);
+                    if (success) PerformDraw(locatedSymbol);
+                }
             }
         }
 
@@ -39,8 +42,8 @@ namespace Prevoid.View
             if (Console.BackgroundColor != located.Symbol.BackColor)
                 Console.BackgroundColor = located.Symbol.BackColor;
 
-            if (Console.CursorLeft != located.X - 1 || Console.CursorTop != located.Y)
-                Console.SetCursorPosition(located.X, located.Y);
+            if (Console.CursorLeft != located.ScreenX - 1 || Console.CursorTop != located.ScreenY)
+                Console.SetCursorPosition(located.ScreenX, located.ScreenY);
 
             Console.Write(located.Symbol.Text);
         }

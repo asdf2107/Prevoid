@@ -1,5 +1,6 @@
 ﻿using Prevoid.Model;
 using Prevoid.Model.Commands;
+using Prevoid.Model.EventArgs;
 using Prevoid.View.Renderers;
 using Prevoid.ViewModel;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace Prevoid.View
             _MapRenderer = new MapRenderer(_ScreenDrawer, GM.Map);
 
             GM.TurnChanged += RenderTurnChange;
+            GM.Map.SelectionMoved += RenderSelectionMove;
 
             GM.CommandHandler.NeedMoveCommandRender += RenderMoveCommand;
             GM.CommandHandler.NeedAttackCommandRender += RenderAttackCommand;
@@ -34,6 +36,11 @@ namespace Prevoid.View
         private void RenderTurnChange()
         {
             _MapRenderer.RenderMap();
+        }
+
+        private void RenderSelectionMove(SelectionMovedEventArgs eventArgs)
+        {
+            _MapRenderer.RenderFields(new[] { (eventArgs.FromX, eventArgs.FromY), (eventArgs.ToX, eventArgs.ToY) });
         }
 
         private void RenderMoveCommand(MoveCommand command)

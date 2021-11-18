@@ -1,14 +1,18 @@
-﻿using System;
+﻿using Prevoid.Model.EventArgs;
+using System;
 using System.Collections.Generic;
 
 namespace Prevoid.Model
 {
     public class Map
     {
+        public event Action<SelectionMovedEventArgs> SelectionMoved;
+
         public Unit[,] Fields { get; private set; }
         public Structure[,] Structures { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public (int, int) Selection { get; private set; }
 
         public Map(int width, int height)
         {
@@ -16,6 +20,7 @@ namespace Prevoid.Model
             Height = height;
             Fields = new Unit[Width, Height];
             Structures = new Structure[Width, Height];
+            Selection = (Width / 2, Height / 2);
         }
 
         public void SetStructure(Structure structure, int x, int y)
@@ -76,6 +81,26 @@ namespace Prevoid.Model
         public bool InBounds(int x, int y)
         {
             return x >= 0 && y >= 0 && x < Width && y < Height;
+        }
+
+        public bool TryMoveSelection(Direction direction)
+        {
+            int dx = (direction == Direction.West) ? -1 : (direction == Direction.East) ? 1 : 0;
+            int dy = (direction == Direction.North) ? -1 : (direction == Direction.South) ? 1 : 0;
+            return TrySetSelection(Selection.Item1 + dx, Selection.Item2 + dy);
+        }
+
+        private bool TrySetSelection(int x, int y)
+        {
+            if (InBounds(x, y))
+            {
+                var eventArgs = new SelectionMovedEventArgs(Selection.Item1, Selection.Item2, x, y);
+                Selection = (x, y);
+                SelectionMoved?.Invoke(eventArgs);
+                return true;
+            }
+
+            return false;
         }
     }
 }

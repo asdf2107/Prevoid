@@ -1,4 +1,5 @@
 ﻿using Prevoid.Model;
+using Prevoid.Model.EventArgs;
 using Prevoid.ViewModel;
 using System.Collections.Generic;
 
@@ -51,8 +52,8 @@ namespace Prevoid.View.Renderers
             {
                 _Drawer.Draw(new LocatedSymbol
                 {
-                    X = coord.Item1,
-                    Y = coord.Item2,
+                    ScreenX = coord.Item1 * 2,
+                    ScreenY = coord.Item2,
                     Symbol = GetSymbol(overlay.Sprite, coord.Item1, coord.Item2),
                 });
             }
@@ -67,15 +68,27 @@ namespace Prevoid.View.Renderers
         {
             return new LocatedSymbol
             {
-                X = x,
-                Y = y,
+                ScreenX = x * 2,
+                ScreenY = y,
                 Symbol = GetSymbolAt(x, y),
             };
         }
 
         private Symbol GetSymbolAt(int x, int y)
         {
-            return GetSymbolFromSpriteType(GetSpriteTypeAt(x, y));
+            var symbol = GetSymbolFromSpriteType(GetSpriteTypeAt(x, y));
+
+            if (Map.Selection.Item1 == x && Map.Selection.Item2 == y)
+            {
+                symbol = new Symbol
+                {
+                    ForeColor = symbol.ForeColor,
+                    BackColor = Constants.SelectionColor,
+                    Text = symbol.Text,
+                };
+            }
+
+            return symbol;
         }
 
         private SpriteType GetSpriteTypeAt(int x, int y)
@@ -117,7 +130,7 @@ namespace Prevoid.View.Renderers
                 _ => new Symbol
                 {
                     BackColor = Constants.TerrainColor,
-                    Text = string.Empty,
+                    Text = "  ",
                 },
             };
         }
