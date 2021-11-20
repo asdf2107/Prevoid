@@ -66,9 +66,57 @@ namespace Prevoid.Model
                 Add(x - 2, y - 2);
                 Add(x - 2, y + 2);
                 Add(x + 2, y - 2);
+
+                Add(x + 2, y + 1);
+                Add(x - 2, y - 1);
+                Add(x - 2, y + 1);
+                Add(x + 2, y - 1);
+
+                Add(x + 1, y + 2);
+                Add(x - 1, y - 2);
+                Add(x - 1, y + 2);
+                Add(x + 1, y - 2);
             }
 
-            if (range >= 4) throw new NotImplementedException();
+            if (range >= 4)
+            {
+                Add(x + 4, y);
+                Add(x - 4, y);
+                Add(x, y + 4);
+                Add(x, y - 4);
+
+                Add(x + 4, y - 1);
+                Add(x - 4, y - 1);
+                Add(x - 1, y + 4);
+                Add(x - 1, y - 4);
+
+                Add(x + 4, y + 1);
+                Add(x - 4, y + 1);
+                Add(x + 1, y + 4);
+                Add(x + 1, y - 4);
+
+                Add(x + 3, y - 1);
+                Add(x - 3, y - 1);
+                Add(x - 1, y + 3);
+                Add(x - 1, y - 3);
+
+                Add(x + 3, y + 1);
+                Add(x - 3, y + 1);
+                Add(x + 1, y + 3);
+                Add(x + 1, y - 3);
+
+                Add(x + 3, y - 2);
+                Add(x - 3, y - 2);
+                Add(x - 2, y + 3);
+                Add(x - 2, y - 3);
+
+                Add(x + 3, y + 2);
+                Add(x - 3, y + 2);
+                Add(x + 2, y + 3);
+                Add(x + 2, y - 3);
+            }
+
+            if (range >= 5) throw new NotImplementedException();
 
             return result;
 

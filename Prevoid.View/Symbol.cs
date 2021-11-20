@@ -24,5 +24,15 @@ namespace Prevoid.View
                 Text = this.Text + next.Text,
             };
         }
+
+        public Symbol GetTranslucent(ConsoleColor color)
+        {
+            return new Symbol
+            {
+                ForeColor = ForeColor,
+                BackColor = color,
+                Text = Text,
+            };
+        }
     }
 }

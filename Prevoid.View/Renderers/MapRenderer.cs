@@ -1,6 +1,7 @@
 ﻿using Prevoid.Model;
 using Prevoid.Model.EventArgs;
 using Prevoid.ViewModel;
+using System;
 using System.Collections.Generic;
 
 namespace Prevoid.View.Renderers
@@ -48,15 +49,14 @@ namespace Prevoid.View.Renderers
 
         public void RenderOverlay(Overlay overlay)
         {
+            List<LocatedSymbol> symbols = new List<LocatedSymbol>();
+
             foreach (var coord in overlay.GetFields())
             {
-                _Drawer.Draw(new LocatedSymbol
-                {
-                    ScreenX = coord.Item1 * 2,
-                    ScreenY = coord.Item2,
-                    Symbol = GetSymbol(overlay.Sprite, coord.Item1, coord.Item2),
-                });
+                symbols.Add(GetLocatedSymbolAt(coord.Item1, coord.Item2, GetOverlayColor(overlay.Type)));
             }
+
+            _Drawer.Draw(symbols);
         }
 
         public void HideOverlay(Overlay overlay)
@@ -64,60 +64,60 @@ namespace Prevoid.View.Renderers
             RenderFields(overlay.GetFields());
         }
 
-        private LocatedSymbol GetLocatedSymbolAt(int x, int y)
+        private ConsoleColor GetOverlayColor(OverlayType overlayType)
+        {
+            return overlayType switch
+            {
+                OverlayType.Move => Constants.MoveOverlayColor,
+                OverlayType.Attack => Constants.AttackOverlayColor,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private LocatedSymbol GetLocatedSymbolAt(int x, int y, ConsoleColor? overlayColor = null)
         {
             return new LocatedSymbol
             {
                 ScreenX = x * 2,
                 ScreenY = y,
-                Symbol = GetSymbolAt(x, y),
+                Symbol = GetSymbolAt(x, y, overlayColor),
             };
         }
 
-        private Symbol GetSymbolAt(int x, int y)
+        private Symbol GetSymbolAt(int x, int y, ConsoleColor? overlayColor)
         {
-            var symbol = GetSymbolFromSpriteType(GetSpriteTypeAt(x, y));
+            var (spriteType, harmable) = GetSpriteTypeAndIHarmableAt(x, y);
+            var symbol = GetSymbolFromSpriteType(spriteType, harmable);
 
             if (Map.Selection.Item1 == x && Map.Selection.Item2 == y)
             {
-                symbol = new Symbol
-                {
-                    ForeColor = symbol.ForeColor,
-                    BackColor = Constants.SelectionColor,
-                    Text = symbol.Text,
-                };
+                return symbol.GetTranslucent(Constants.SelectionColor);
+            }
+            if (overlayColor is not null)
+            {
+                return symbol.GetTranslucent(overlayColor.Value);
             }
 
             return symbol;
         }
 
-        private SpriteType GetSpriteTypeAt(int x, int y)
+        private (SpriteType, IHarmable) GetSpriteTypeAndIHarmableAt(int x, int y)
         {
             if (Map.Fields[x, y] != null)
             {
-                return Map.Fields[x, y].SpriteType;
+                return (Map.Fields[x, y].SpriteType, Map.Fields[x, y]);
             }
             else if (Map.Structures[x, y] != null)
             {
-                return Map.Structures[x, y].SpriteType;
+                return (Map.Structures[x, y].SpriteType, Map.Structures[x, y] as IHarmable);
             }
             else
             {
-                return SpriteType.Empty;
+                return (SpriteType.Empty, null);
             }
         }
 
-        private Symbol GetSymbol(Sprite sprite, int x, int y)
-        {
-            Symbol result = new Symbol
-            {
-                Text = sprite.Text,
-            };
-
-            return result.MergeWith(GetSymbolFromSpriteType(sprite.Type == SpriteType.Translucent ? GetSpriteTypeAt(x, y) : sprite.Type));
-        }
-
-        private Symbol GetSymbolFromSpriteType(SpriteType spriteType)
+        private Symbol GetSymbolFromSpriteType(SpriteType spriteType, IHarmable harmable)
         {
             return spriteType switch
             {
@@ -127,11 +127,18 @@ namespace Prevoid.View.Renderers
                     BackColor = Constants.TerrainColor,
                     Text = @"/\",
                 },
-                _ => new Symbol
+                SpriteType.Tank => new Symbol
+                {
+                    ForeColor = harmable.Player.Color,
+                    BackColor = Constants.TerrainColor,
+                    Text = "T" + harmable.Hp,
+                },
+                SpriteType.Empty => new Symbol
                 {
                     BackColor = Constants.TerrainColor,
                     Text = "  ",
                 },
+                _ => throw new NotImplementedException(),
             };
         }
     }

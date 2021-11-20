@@ -14,8 +14,6 @@ namespace Prevoid.Model
         public static GameState GameState;
         public static readonly Random Random = new Random();
         public static readonly CommandHandler CommandHandler = new CommandHandler();
-        public static readonly Overlay MoveAreaOverlay;
-        public static readonly Overlay AttackAreaOverlay;
 
         static GM()
         {
@@ -23,13 +21,6 @@ namespace Prevoid.Model
             Player1 = new Player(1, ConsoleColor.Blue);
             Player2 = new Player(2, ConsoleColor.Red);
             CurrentPlayer = Player1;
-
-            var translucentSprite = new Sprite
-            {
-                Type = SpriteType.Translucent,
-            };
-            MoveAreaOverlay = new Overlay(OverlayType.Move, translucentSprite);
-            AttackAreaOverlay = new Overlay(OverlayType.Attack, translucentSprite);
         }
 
         public static void NextTurn()
