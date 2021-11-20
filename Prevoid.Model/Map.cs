@@ -25,9 +25,14 @@ namespace Prevoid.Model
 
         public void SetStructure(Structure structure, int x, int y)
         {
-            structure.X = x;
-            structure.Y = y;
+            structure.SetCoords(x, y);
             Structures[x, y] = structure;
+        }
+
+        public void SetUnit(Unit unit, int x, int y)
+        {
+            unit.SetCoords(x, y);
+            Fields[x, y] = unit;
         }
 
         public List<(int, int)> GetArea(int x, int y, int range)

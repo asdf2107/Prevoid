@@ -1,13 +1,14 @@
 ﻿using Prevoid.Model.Commands;
 using Prevoid.ViewModel;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Prevoid.Model
 {
     public abstract class Unit : ILocateable, IVisible, IHarmable
     {
-        public int X { get; set; } = -1;
-        public int Y { get; set; } = -1;
+        public int X { get; protected set; } = -1;
+        public int Y { get; protected set; } = -1;
         public SpriteType SpriteType { get; private set; }
         public Player Player { get; private set; }
         public bool CanMove { get => MoveRange > 0; }
@@ -30,24 +31,39 @@ namespace Prevoid.Model
             Weapon = weapon;
         }
 
+        public void SetCoords(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
         public void Move(int toX, int toY)
         {
             GM.CommandHandler.HandleCommand(new MoveCommand(this, toX, toY));
         }
 
-        public virtual List<(int, int)> GetMoveArea()
+        public virtual IEnumerable<(int, int)> GetMoveArea()
         {
-            return GM.Map.GetArea(X, Y, MoveRange);
+            List<(int, int)> coords = GM.Map.GetArea(X, Y, MoveRange);
+            coords.RemoveAll(c => GM.Map.Fields[c.Item1, c.Item2] != null);
+            return coords;
+        }
+
+        public virtual IEnumerable<(int, int)> GetAttackArea()
+        {
+            return GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
+        }
+
+        public virtual IEnumerable<(int, int)> GetAttackTargets()
+        {
+            List<(int, int)> coords = GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
+            return coords.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
+                && GM.Map.Fields[c.Item1, c.Item2].Player != Player);     
         }
 
         public void Attack(int atX, int atY)
         {
             GM.CommandHandler.HandleCommand(new AttackCommand(this, atX, atY, CalculateDamage(), Weapon.DamageType));
-        }
-
-        public virtual List<(int, int)> GetAttackArea()
-        {
-            return GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
         }
 
         public void Harm(float damage)

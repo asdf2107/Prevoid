@@ -29,8 +29,7 @@ namespace Prevoid.Model
         private void MoveUnit(MoveCommand command)
         {
             GM.Map.Fields[command.Unit.X, command.Unit.Y] = null;
-            command.Unit.X = command.ToX;
-            command.Unit.Y = command.ToY;
+            command.Unit.SetCoords(command.ToX, command.ToY);
             GM.Map.Fields[command.ToX, command.ToY] = command.Unit;
         }
 

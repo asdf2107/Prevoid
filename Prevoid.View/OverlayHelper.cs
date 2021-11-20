@@ -22,7 +22,7 @@ namespace Prevoid.View
             var unit = Map.Fields[Map.Selection.Item1, Map.Selection.Item2];
             if (unit != null && unit.Player == GM.CurrentPlayer)
             {
-                overlay.Add(Map.GetArea(Map.Selection.Item1, Map.Selection.Item2, unit.MoveRange));
+                overlay.Add(unit.GetMoveArea());
             }
         }
     }

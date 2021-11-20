@@ -2,7 +2,8 @@
 {
     public interface ILocateable
     {
-        int X { get; set; }
-        int Y { get; set; }
+        int X { get; }
+        int Y { get; }
+        void SetCoords(int x, int y);
     }
 }

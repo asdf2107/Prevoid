@@ -27,5 +27,11 @@ namespace Prevoid.Model
             MovementBonus = movementBonus;
             AttackRangeBonus = attackRangeBonus;
         }
+
+        public void SetCoords(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
     }
 }

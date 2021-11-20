@@ -64,9 +64,17 @@ namespace Prevoid.Model
                 case ConsoleKey.RightArrow:
                     Map.TryMoveSelection(Direction.East);
                     break;
+                case ConsoleKey.Enter:
+                    EnterPressed();
+                    break;
             }
 
             return true;
+        }
+
+        private static void EnterPressed()
+        {
+
         }
     }
 }

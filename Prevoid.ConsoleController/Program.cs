@@ -15,7 +15,7 @@ namespace Prevoid.ConsoleController
             _ = rh.StartRenderingAsync();
 
             GM.Map.SetStructure(new Mountain(), 15, 15);
-            GM.Map.Fields[14, 13] = new Tank(GM.CurrentPlayer);
+            GM.Map.SetUnit(new Tank(GM.CurrentPlayer), 16, 17);
             GM.NextTurn();
             GM.NextTurn();
 
