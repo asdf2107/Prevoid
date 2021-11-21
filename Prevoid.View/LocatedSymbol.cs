@@ -8,15 +8,15 @@ namespace Prevoid.View
     public struct LocatedSymbol
     {
         public Symbol Symbol { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int ScreenX { get; set; }
+        public int ScreenY { get; set; }
 
         public LocatedSymbol MergeWith(LocatedSymbol next)
         {
             return new LocatedSymbol
             {
-                X = this.X,
-                Y = this.Y,
+                ScreenX = this.ScreenX,
+                ScreenY = this.ScreenY,
                 Symbol = this.Symbol.MergeWith(next.Symbol),
             };
         }

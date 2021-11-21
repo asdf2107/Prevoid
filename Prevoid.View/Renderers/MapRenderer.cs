@@ -1,5 +1,7 @@
 ﻿using Prevoid.Model;
+using Prevoid.Model.EventArgs;
 using Prevoid.ViewModel;
+using System;
 using System.Collections.Generic;
 
 namespace Prevoid.View.Renderers
@@ -47,15 +49,14 @@ namespace Prevoid.View.Renderers
 
         public void RenderOverlay(Overlay overlay)
         {
+            List<LocatedSymbol> symbols = new List<LocatedSymbol>();
+
             foreach (var coord in overlay.GetFields())
             {
-                _Drawer.Draw(new LocatedSymbol
-                {
-                    X = coord.Item1,
-                    Y = coord.Item2,
-                    Symbol = GetSymbol(overlay.Sprite),
-                });
+                symbols.Add(GetLocatedSymbolAt(coord.Item1, coord.Item2, GetOverlayColor(overlay.Type)));
             }
+
+            _Drawer.Draw(symbols);
         }
 
         public void HideOverlay(Overlay overlay)
@@ -63,58 +64,113 @@ namespace Prevoid.View.Renderers
             RenderFields(overlay.GetFields());
         }
 
-        private LocatedSymbol GetLocatedSymbolAt(int x, int y)
+        private ConsoleColor GetOverlayColor(OverlayType overlayType)
+        {
+            return overlayType switch
+            {
+                OverlayType.Select => Constants.SelectOverlayColor,
+                OverlayType.Move => Constants.MoveOverlayColor,
+                OverlayType.Attack => Constants.AttackOverlayColor,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private LocatedSymbol GetLocatedSymbolAt(int x, int y, ConsoleColor? overlayColor = null)
         {
             return new LocatedSymbol
             {
-                X = x,
-                Y = y,
-                Symbol = GetSymbolAt(x, y),
+                ScreenX = x * 2,
+                ScreenY = y,
+                Symbol = GetSymbolAt(x, y, overlayColor),
             };
         }
 
-        // TODO: Add logic
-        private Symbol GetSymbolAt(int x, int y)
+        private Symbol GetSymbolAt(int x, int y, ConsoleColor? overlayColor)
+        {
+            var (spriteType, harmable) = GetSpriteTypeAndIHarmableAt(x, y);
+            var symbol = GetSymbolFromSpriteType(spriteType, harmable);
+
+            if (Map.Selection.Item1 == x && Map.Selection.Item2 == y)
+            {
+                return symbol.GetTranslucent(Constants.SelectionColor);
+            }
+            if (overlayColor is not null)
+            {
+                return symbol.GetTranslucent(overlayColor.Value);
+            }
+
+            return symbol;
+        }
+
+        private (SpriteType, IHarmable) GetSpriteTypeAndIHarmableAt(int x, int y)
         {
             if (Map.Fields[x, y] != null)
             {
-                return GetSymbolFromSpriteType(Map.Fields[x, y].SpriteType);
+                return (Map.Fields[x, y].SpriteType, Map.Fields[x, y]);
             }
             else if (Map.Structures[x, y] != null)
             {
-                return GetSymbolFromSpriteType(Map.Structures[x, y].SpriteType);
+                return (Map.Structures[x, y].SpriteType, Map.Structures[x, y] as IHarmable);
             }
             else
             {
-                return GetSymbolFromSpriteType(SpriteType.Empty);
+                return (GetSpriteTypeFromTerrain(x, y), null);
             }
         }
 
-        private Symbol GetSymbol(Sprite sprite)
+        private SpriteType GetSpriteTypeFromTerrain(int x, int y)
         {
-            Symbol result = new Symbol
+            return Map.TerrainTypes[x, y] switch
             {
-                Text = sprite.Text,
+                TerrainType.Flat => SpriteType.Empty,
+                TerrainType.SparceForest => SpriteType.SparceForest,
+                TerrainType.DeepForest => SpriteType.DeepForest,
+                TerrainType.Mountain => SpriteType.Mountain,
+                TerrainType.Water => SpriteType.Water,
+                _ => throw new NotImplementedException(),
             };
-
-            return result.MergeWith(GetSymbolFromSpriteType(sprite.Type));
         }
 
-        private Symbol GetSymbolFromSpriteType(SpriteType spriteType)
+        private Symbol GetSymbolFromSpriteType(SpriteType spriteType, IHarmable harmable)
         {
             return spriteType switch
             {
+                SpriteType.Empty => new Symbol
+                {
+                    BackColor = Constants.TerrainColor,
+                    Text = "  ",
+                },
                 SpriteType.Mountain => new Symbol
                 {
                     ForeColor = Constants.MountainColor,
                     BackColor = Constants.TerrainColor,
                     Text = @"/\",
                 },
-                _ => new Symbol
+                SpriteType.Water => new Symbol
                 {
-                    BackColor = Constants.TerrainColor,
-                    Text = string.Empty,
+                    ForeColor = Constants.WavesColor,
+                    BackColor = Constants.WaterColor,
+                    Text = "~ ",
                 },
+                SpriteType.SparceForest => new Symbol
+                {
+                    ForeColor = Constants.ForestColor,
+                    BackColor = Constants.TerrainColor,
+                    Text = "▲ ",
+                },
+                SpriteType.DeepForest => new Symbol
+                {
+                    ForeColor = Constants.ForestColor,
+                    BackColor = Constants.TerrainColor,
+                    Text = "▲▲",
+                },
+                SpriteType.Tank => new Symbol
+                {
+                    ForeColor = harmable.Player.Color,
+                    BackColor = Constants.TerrainColor,
+                    Text = "T" + harmable.Hp,
+                },
+                _ => throw new NotImplementedException(),
             };
         }
     }
