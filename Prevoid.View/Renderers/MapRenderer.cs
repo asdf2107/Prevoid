@@ -68,6 +68,7 @@ namespace Prevoid.View.Renderers
         {
             return overlayType switch
             {
+                OverlayType.Select => Constants.SelectOverlayColor,
                 OverlayType.Move => Constants.MoveOverlayColor,
                 OverlayType.Attack => Constants.AttackOverlayColor,
                 _ => throw new NotImplementedException(),
@@ -113,30 +114,61 @@ namespace Prevoid.View.Renderers
             }
             else
             {
-                return (SpriteType.Empty, null);
+                return (GetSpriteTypeFromTerrain(x, y), null);
             }
+        }
+
+        private SpriteType GetSpriteTypeFromTerrain(int x, int y)
+        {
+            return Map.TerrainTypes[x, y] switch
+            {
+                TerrainType.Flat => SpriteType.Empty,
+                TerrainType.SparceForest => SpriteType.SparceForest,
+                TerrainType.DeepForest => SpriteType.DeepForest,
+                TerrainType.Mountain => SpriteType.Mountain,
+                TerrainType.Water => SpriteType.Water,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         private Symbol GetSymbolFromSpriteType(SpriteType spriteType, IHarmable harmable)
         {
             return spriteType switch
             {
+                SpriteType.Empty => new Symbol
+                {
+                    BackColor = Constants.TerrainColor,
+                    Text = "  ",
+                },
                 SpriteType.Mountain => new Symbol
                 {
                     ForeColor = Constants.MountainColor,
                     BackColor = Constants.TerrainColor,
                     Text = @"/\",
                 },
+                SpriteType.Water => new Symbol
+                {
+                    ForeColor = Constants.WavesColor,
+                    BackColor = Constants.WaterColor,
+                    Text = "~ ",
+                },
+                SpriteType.SparceForest => new Symbol
+                {
+                    ForeColor = Constants.ForestColor,
+                    BackColor = Constants.TerrainColor,
+                    Text = "▲ ",
+                },
+                SpriteType.DeepForest => new Symbol
+                {
+                    ForeColor = Constants.ForestColor,
+                    BackColor = Constants.TerrainColor,
+                    Text = "▲▲",
+                },
                 SpriteType.Tank => new Symbol
                 {
                     ForeColor = harmable.Player.Color,
                     BackColor = Constants.TerrainColor,
                     Text = "T" + harmable.Hp,
-                },
-                SpriteType.Empty => new Symbol
-                {
-                    BackColor = Constants.TerrainColor,
-                    Text = "  ",
                 },
                 _ => throw new NotImplementedException(),
             };

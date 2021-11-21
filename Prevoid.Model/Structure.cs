@@ -8,19 +8,19 @@ namespace Prevoid.Model
         public int Y { get; set; } = -1;
         public SpriteType SpriteType { get; private set; }
         /// <summary>
-        /// How well this structure can hide units (in the Fog of war). Can't be less than None.
+        /// How well this structure can hide units (in the Fog of war). Can't be less than 0.
         /// </summary>
-        public Scale FogBonus { get; private set; }
+        public int FogBonus { get; private set; }
         /// <summary>
         /// Increses or decreses movement range.
         /// </summary>
-        public Scale MovementBonus { get; private set; }
+        public int MovementBonus { get; private set; }
         /// <summary>
         /// Increses or decreses attack range.
         /// </summary>
-        public Scale AttackRangeBonus { get; private set; }
+        public int AttackRangeBonus { get; private set; }
 
-        public Structure(SpriteType spriteType, Scale fogBonus, Scale movementBonus, Scale attackRangeBonus)
+        public Structure(SpriteType spriteType, int fogBonus, int movementBonus, int attackRangeBonus)
         {
             SpriteType = spriteType;
             FogBonus = fogBonus;

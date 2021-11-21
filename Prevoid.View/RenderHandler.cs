@@ -26,6 +26,7 @@ namespace Prevoid.View
 
             GM.TurnChanged += RenderTurnChange;
             GM.Map.SelectionMoved += RenderSelectionMove;
+            GM.SelectedUnitChanged += RenderSelectedUnitChange;
 
             GM.CommandHandler.NeedMoveCommandRender += RenderMoveCommand;
             GM.CommandHandler.NeedAttackCommandRender += RenderAttackCommand;
@@ -49,6 +50,11 @@ namespace Prevoid.View
         private void RenderSelectionMove(SelectionMovedEventArgs eventArgs)
         {
             _MapRenderer.RenderFields(new[] { (eventArgs.FromX, eventArgs.FromY), (eventArgs.ToX, eventArgs.ToY) });
+            _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
+        }
+
+        private void RenderSelectedUnitChange(Unit unit)
+        {
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
         }
 

@@ -19,17 +19,17 @@ namespace Prevoid.View
                 if (ordered[currentHead].Symbol.IsSameForDrawing(ordered[i].Symbol))
                 {
                     ordered[currentHead] = ordered[currentHead].MergeWith(ordered[i]);
-                    headMerged = true;
+                    //headMerged = true;
                 }
                 else
                 {
                     res.Add(ordered[currentHead]);
                     currentHead = i++;
-                    headMerged = false;
+                    //headMerged = false;
                 }
             }
 
-            if (!headMerged) res.Add(ordered[currentHead]);
+            /*if (!headMerged)*/ res.Add(ordered[currentHead]);
 
             return res;
         }

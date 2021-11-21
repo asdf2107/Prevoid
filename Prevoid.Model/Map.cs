@@ -10,6 +10,7 @@ namespace Prevoid.Model
 
         public Unit[,] Fields { get; private set; }
         public Structure[,] Structures { get; private set; }
+        public TerrainType[,] TerrainTypes { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
         public (int, int) Selection { get; private set; }
@@ -20,6 +21,7 @@ namespace Prevoid.Model
             Height = height;
             Fields = new Unit[Width, Height];
             Structures = new Structure[Width, Height];
+            TerrainTypes = new TerrainType[Width, Height];
             Selection = (Width / 2, Height / 2);
         }
 
@@ -35,12 +37,27 @@ namespace Prevoid.Model
             Fields[x, y] = unit;
         }
 
-        public List<(int, int)> GetArea(int x, int y, int range)
+        public Unit GetUnitAtSelection()
         {
-            List<(int, int)> result = new List<(int, int)>();
+            return Fields[Selection.Item1, Selection.Item2];
+        }
+
+        /// <summary>
+        /// Get coords corresponding to a circle of given radius with the center in (x, y)
+        /// </summary>
+        /// <param name="x">X coordinate of circle center</param>
+        /// <param name="y">Y coordinate of circle center</param>
+        /// <param name="range">Radius of the circle</param>
+        /// <returns>Collection of tuples of formst (X, Yance from center)</returns>
+        public List<(int, int, int)> GetArea(int x, int y, int range)
+        {
+            List<(int, int, int)> result = new List<(int, int, int)>();
+            int dist = 0;
 
             if (range >= 1)
             {
+                dist = 1;
+
                 Add(x + 1, y);
                 Add(x - 1, y);
                 Add(x, y + 1);
@@ -49,6 +66,8 @@ namespace Prevoid.Model
 
             if (range >= 2)
             {
+                dist = 2;
+
                 Add(x + 2, y);
                 Add(x - 2, y);
                 Add(x, y + 2);
@@ -62,6 +81,8 @@ namespace Prevoid.Model
 
             if (range >= 3)
             {
+                dist = 3;
+
                 Add(x + 3, y);
                 Add(x - 3, y);
                 Add(x, y + 3);
@@ -85,6 +106,8 @@ namespace Prevoid.Model
 
             if (range >= 4)
             {
+                dist = 4;
+
                 Add(x + 4, y);
                 Add(x - 4, y);
                 Add(x, y + 4);
@@ -127,7 +150,7 @@ namespace Prevoid.Model
 
             void Add(int x, int y)
             {
-                if (InBounds(x, y)) result.Add((x, y));
+                if (InBounds(x, y)) result.Add((x, y, dist));
             }
         }
 

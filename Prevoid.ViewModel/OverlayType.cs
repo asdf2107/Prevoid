@@ -2,6 +2,7 @@
 {
     public enum OverlayType
     {
+        Select,
         Move,
         Attack,
     }

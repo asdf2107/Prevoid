@@ -44,21 +44,22 @@ namespace Prevoid.Model
 
         public virtual IEnumerable<(int, int)> GetMoveArea()
         {
-            List<(int, int)> coords = GM.Map.GetArea(X, Y, MoveRange);
-            coords.RemoveAll(c => GM.Map.Fields[c.Item1, c.Item2] != null);
-            return coords;
+            List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, MoveRange);
+            coordsWithDist.RemoveAll(c => GM.Map.Fields[c.Item1, c.Item2] != null
+                || c.Item3 - GM.Map.TerrainTypes[c.Item1, c.Item2].GetMovementBonus() > MoveRange);
+            return coordsWithDist.GetCoords();
         }
 
         public virtual IEnumerable<(int, int)> GetAttackArea()
         {
-            return GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
+            return GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0).GetCoords();
         }
 
         public virtual IEnumerable<(int, int)> GetAttackTargets()
         {
-            List<(int, int)> coords = GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
-            return coords.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
-                && GM.Map.Fields[c.Item1, c.Item2].Player != Player);     
+            List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
+            return coordsWithDist.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
+                && GM.Map.Fields[c.Item1, c.Item2].Player != Player).GetCoords();     
         }
 
         public void Attack(int atX, int atY)

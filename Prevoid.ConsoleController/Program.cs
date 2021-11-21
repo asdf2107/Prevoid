@@ -1,5 +1,4 @@
 ﻿using Prevoid.Model;
-using Prevoid.Model.Structures;
 using Prevoid.Model.Units;
 using Prevoid.View;
 using System;
@@ -14,7 +13,6 @@ namespace Prevoid.ConsoleController
             RenderHandler rh = new RenderHandler();
             _ = rh.StartRenderingAsync();
 
-            GM.Map.SetStructure(new Mountain(), 15, 15);
             GM.Map.SetUnit(new Tank(GM.CurrentPlayer), 16, 17);
             GM.NextTurn();
             GM.NextTurn();

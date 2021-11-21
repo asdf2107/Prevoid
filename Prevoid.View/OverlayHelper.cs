@@ -19,8 +19,10 @@ namespace Prevoid.View
         {
             overlay.Clear();
 
-            var unit = Map.Fields[Map.Selection.Item1, Map.Selection.Item2];
-            if (unit != null && unit.Player == GM.CurrentPlayer)
+            var unit = GM.SelectedUnit ?? Map.Fields[Map.Selection.Item1, Map.Selection.Item2];
+            overlay.SetOverlayType(GM.SelectedUnit is null ? OverlayType.Move : OverlayType.Select);
+
+            if (unit is not null && unit.Player == GM.CurrentPlayer)
             {
                 overlay.Add(unit.GetMoveArea());
             }

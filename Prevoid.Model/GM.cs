@@ -1,23 +1,37 @@
-﻿using Prevoid.ViewModel;
+﻿using Prevoid.Model.MapGeneration.MapGenStrategies;
+using Prevoid.ViewModel;
 using System;
+using System.Linq;
 
 namespace Prevoid.Model
 {
     public static class GM
     {
         public static event Action TurnChanged;
+        public static event Action<Unit> SelectedUnitChanged;
 
+        public static readonly Random Random = new Random();
+        public static readonly CommandHandler CommandHandler = new CommandHandler();
         public static Map Map;
         public static Player Player1;
         public static Player Player2;
         public static Player CurrentPlayer;
         public static GameState GameState;
-        public static readonly Random Random = new Random();
-        public static readonly CommandHandler CommandHandler = new CommandHandler();
+        private static Unit _SelectedUnit;
+        public static Unit SelectedUnit
+        {
+            get { return _SelectedUnit; }
+            set
+            {
+                _SelectedUnit = value;
+                SelectedUnitChanged?.Invoke(_SelectedUnit);
+            }
+        }
 
         static GM()
         {
             Map = new Map(30, 30);
+            new DefaultMapGenStrategy().GenMap(Map, Random.Next());
             Player1 = new Player(1, ConsoleColor.Blue);
             Player2 = new Player(2, ConsoleColor.Red);
             CurrentPlayer = Player1;
@@ -67,6 +81,9 @@ namespace Prevoid.Model
                 case ConsoleKey.Enter:
                     EnterPressed();
                     break;
+                case ConsoleKey.Escape:
+                    EscapePressed();
+                    break;
             }
 
             return true;
@@ -74,7 +91,34 @@ namespace Prevoid.Model
 
         private static void EnterPressed()
         {
+            if (SelectedUnit is null)
+            {
+                var unit = Map.GetUnitAtSelection();
+                if (unit?.Player == CurrentPlayer) SelectedUnit = unit;
+            }
+            else
+            {
+                if (GameState == GameState.Movement
+                    && SelectedUnit.GetMoveArea().Contains((Map.Selection.Item1, Map.Selection.Item2)))
+                {
+                    SelectedUnit.Move(Map.Selection.Item1, Map.Selection.Item2);
+                    SelectedUnit = null;
+                }
+                else if (GameState == GameState.Attack
+                    && SelectedUnit.GetAttackTargets().Contains(((ILocateable)Map.GetUnitAtSelection())?.Coords ?? (-1, -1)))
+                {
+                    SelectedUnit.Attack(Map.Selection.Item1, Map.Selection.Item2);
+                    //SelectedUnit = null;
+                }
+            }
+        }
 
+        private static void EscapePressed()
+        {
+            if (SelectedUnit is not null)
+            {
+                SelectedUnit = null;
+            }
         }
     }
 }

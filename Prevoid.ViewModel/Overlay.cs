@@ -16,6 +16,11 @@ namespace Prevoid.ViewModel
             Type = type;
         }
 
+        public void SetOverlayType(OverlayType overlayType)
+        {
+            Type = overlayType;
+        }
+
         public IEnumerable<(int, int)> GetFields()
         {
             return _Fields.ToArray();
