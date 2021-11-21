@@ -10,6 +10,8 @@ namespace Prevoid.ConsoleController
         static void Main()
         {
             Console.CursorVisible = false;
+            Console.Title = "Prevoid";
+            Console.WindowHeight = 31;
             RenderHandler rh = new RenderHandler();
             _ = rh.StartRenderingAsync();
 

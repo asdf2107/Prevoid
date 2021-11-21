@@ -10,6 +10,16 @@ namespace Prevoid.View
         public ConsoleColor BackColor { get; set; }
         public string Text { get; set; }
 
+        public static Symbol FromText(string text, ConsoleColor foreColor = Constants.BrightTextColor)
+        {
+            return new Symbol
+            {
+                ForeColor = foreColor,
+                BackColor = Constants.BackgroundColor,
+                Text = text,
+            };
+        }
+
         public bool IsSameForDrawing(Symbol other)
         {
             return ForeColor == other.ForeColor && BackColor == other.BackColor;
