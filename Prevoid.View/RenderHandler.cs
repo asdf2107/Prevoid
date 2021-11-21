@@ -51,11 +51,13 @@ namespace Prevoid.View
         {
             _MapRenderer.RenderFields(new[] { (eventArgs.FromX, eventArgs.FromY), (eventArgs.ToX, eventArgs.ToY) });
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
+            _OverlayHelper.UpdateAttackAreaOverlay(_AttackAreaOverlay);
         }
 
         private void RenderSelectedUnitChange(Unit unit)
         {
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
+            _OverlayHelper.UpdateAttackAreaOverlay(_AttackAreaOverlay);
         }
 
         private void RenderMoveCommand(MoveCommand command)

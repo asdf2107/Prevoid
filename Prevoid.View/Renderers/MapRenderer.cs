@@ -69,6 +69,7 @@ namespace Prevoid.View.Renderers
             return overlayType switch
             {
                 OverlayType.Select => Constants.SelectOverlayColor,
+                OverlayType.EnemyMoveAttack => Constants.EnemyMoveAttackOverlayColor,
                 OverlayType.Move => Constants.MoveOverlayColor,
                 OverlayType.Attack => Constants.AttackOverlayColor,
                 _ => throw new NotImplementedException(),
@@ -168,7 +169,7 @@ namespace Prevoid.View.Renderers
                 {
                     ForeColor = harmable.Player.Color,
                     BackColor = Constants.TerrainColor,
-                    Text = "T" + harmable.Hp,
+                    Text = "T" + harmable.HpChar,
                 },
                 _ => throw new NotImplementedException(),
             };

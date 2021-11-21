@@ -30,7 +30,7 @@ namespace Prevoid.Model
 
         static GM()
         {
-            Map = new Map(30, 30);
+            Map = new Map(Constants.MapWidth, Constants.MapHeight);
             new DefaultMapGenStrategy().GenMap(Map, Random.Next());
             Player1 = new Player(1, ConsoleColor.Blue);
             Player2 = new Player(2, ConsoleColor.Red);
@@ -79,7 +79,11 @@ namespace Prevoid.Model
                     Map.TryMoveSelection(Direction.East);
                     break;
                 case ConsoleKey.Enter:
+                case ConsoleKey.Spacebar:
                     EnterPressed();
+                    break;
+                case ConsoleKey.Tab:
+                    TabPressed();
                     break;
                 case ConsoleKey.Escape:
                     EscapePressed();
@@ -108,9 +112,14 @@ namespace Prevoid.Model
                     && SelectedUnit.GetAttackTargets().Contains(((ILocateable)Map.GetUnitAtSelection())?.Coords ?? (-1, -1)))
                 {
                     SelectedUnit.Attack(Map.Selection.Item1, Map.Selection.Item2);
-                    //SelectedUnit = null;
+                    SelectedUnit = null;
                 }
             }
+        }
+
+        private static void TabPressed()
+        {
+            NextTurn();
         }
 
         private static void EscapePressed()

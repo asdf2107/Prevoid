@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Prevoid.View
 {
@@ -17,6 +15,7 @@ namespace Prevoid.View
         public const ConsoleColor SelectionColor = ConsoleColor.Cyan;
 
         public const ConsoleColor SelectOverlayColor = ConsoleColor.White;
+        public const ConsoleColor EnemyMoveAttackOverlayColor = ConsoleColor.DarkGray;
         public const ConsoleColor MoveOverlayColor = ConsoleColor.Green;
         public const ConsoleColor AttackOverlayColor = ConsoleColor.DarkMagenta;
     }
