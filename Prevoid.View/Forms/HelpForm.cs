@@ -7,7 +7,7 @@ namespace Prevoid.View.Forms
     {
         private readonly List<List<Symbol>> MoveHelpText = new List<List<Symbol>>
         {
-            new List<Symbol> { Symbol.FromText("Move  ") },
+            new List<Symbol> { Symbol.FromText("Move") },
         };
         private readonly List<List<Symbol>> AttackHelpText = new List<List<Symbol>>()
         {

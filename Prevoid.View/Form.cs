@@ -11,10 +11,14 @@ namespace Prevoid.View
         public int Y { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public int SideInterval { get; protected set; } = 2;
         public BoxCharSet BoxCharSet { get; set; }
         public List<List<Symbol>> InnerText { get; protected set; } = EmptyText;
         protected Symbol _CachedUpperBound;
         protected Symbol _CachedLowerBound;
+        protected Symbol _CachedVerticalStart;
+        protected Symbol _CachedVerticalEnd;
+        protected Symbol _CachedBlankLine;
         public static readonly List<List<Symbol>> EmptyText = new();
 
         public Form(int x, int y, int width, int height, BoxCharSet boxCharSet)
@@ -46,8 +50,52 @@ namespace Prevoid.View
                 result.Add(new LocatedSymbol
                 {
                     ScreenX = X,
-                    ScreenY = Y + i + 1,
-                    Symbol = InnerText[i][0], // !!!
+                    ScreenY = Y + 1 + i,
+                    Symbol = _CachedVerticalStart,
+                });
+
+                int lineLength = 0;
+
+                for (int j = 0; j < InnerText[i].Count; j++)
+                {
+                    result.Add(new LocatedSymbol
+                    {
+                        ScreenX = X + SideInterval + lineLength,
+                        ScreenY = Y + 1 + i,
+                        Symbol = InnerText[i][j],
+                    });
+
+                    lineLength += InnerText[i][j].Text.Length;
+                }
+
+                int leftTillLineEnd = Width - lineLength - SideInterval * 2;
+
+                if (leftTillLineEnd > 0)
+                {
+                    result.Add(new LocatedSymbol
+                    {
+                        ScreenX = X + SideInterval + lineLength,
+                        ScreenY = Y + 1 + i,
+                        Symbol = Symbol.FromText(new string(' ', leftTillLineEnd)),
+                    });
+                }
+
+                result.Add(new LocatedSymbol
+                {
+                    ScreenX = X + Width - 1,
+                    ScreenY = Y + 1 + i,
+                    Symbol = _CachedVerticalEnd,
+                });
+            }
+
+            //Add the blank lines
+            for (int i = InnerText.Count + 1; i < Height; i++)
+            {
+                result.Add(new LocatedSymbol
+                {
+                    ScreenX = X,
+                    ScreenY = Y + i,
+                    Symbol = _CachedBlankLine,
                 });
             }
 
@@ -78,6 +126,9 @@ namespace Prevoid.View
 
             _CachedUpperBound = Symbol.FromText(BoxCharSet.SE + horBar + BoxCharSet.SW);
             _CachedLowerBound = Symbol.FromText(BoxCharSet.NE + horBar + BoxCharSet.NW);
+            _CachedVerticalStart = Symbol.FromText(BoxCharSet.Ver.ToString() + " ");
+            _CachedVerticalEnd = Symbol.FromText(" " + BoxCharSet.Ver.ToString());
+            _CachedBlankLine = Symbol.FromText(BoxCharSet.Ver.ToString() + new string(' ', Width - 2) + BoxCharSet.Ver.ToString());
         }
     }
 }
