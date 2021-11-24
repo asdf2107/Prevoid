@@ -24,7 +24,7 @@ namespace Prevoid.View
                 var unit = GM.SelectedUnit ?? Map.Fields[Map.Selection.Item1, Map.Selection.Item2];
                 overlay.SetOverlayType(GM.SelectedUnit is null ? OverlayType.Move : OverlayType.Select);
 
-                if (unit is not null)
+                if (unit is not null && GM.CanCurrentPlayerSee(unit.X, unit.Y))
                 {
                     if (unit.Player != GM.CurrentPlayer || !unit.CanMove)
                     {
@@ -50,7 +50,7 @@ namespace Prevoid.View
                     overlay.SetOverlayType(OverlayType.Select);
                     overlay.Add(chosenUnit.GetAttackTargets());
                 }
-                else if (unit is not null)
+                else if (unit is not null && GM.CanCurrentPlayerSee(unit.X, unit.Y))
                 {
                     overlay.SetOverlayType(unit.Player == GM.CurrentPlayer && unit.CanAttack ? 
                         OverlayType.Attack : OverlayType.Forbidden);

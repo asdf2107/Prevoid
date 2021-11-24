@@ -69,7 +69,7 @@ namespace Prevoid.Model
             return coordsWithDist.GetCoords();
         }
 
-        public virtual int GetMovementBonus(TerrainType terrainType)
+        protected virtual int GetMovementBonus(TerrainType terrainType)
         {
             return terrainType switch
             {
@@ -82,6 +82,19 @@ namespace Prevoid.Model
             };
         }
 
+        protected virtual int GetInvisibilityBonus(TerrainType terrainType)
+        {
+            return terrainType switch
+            {
+                TerrainType.Flat => 0,
+                TerrainType.SparceForest => 1,
+                TerrainType.DeepForest => 2,
+                TerrainType.Mountain => 1,
+                TerrainType.Water => 0,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
         public virtual IEnumerable<(int, int)> GetAttackArea()
         {
             return GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0).GetCoords();
@@ -90,13 +103,17 @@ namespace Prevoid.Model
         public virtual IEnumerable<(int, int)> GetAttackTargets()
         {
             List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
-            return coordsWithDist.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
-                && GM.Map.Fields[c.Item1, c.Item2].Player != Player).GetCoords();     
+            var result = coordsWithDist.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
+                && GM.Map.Fields[c.Item1, c.Item2].Player != Player).GetCoords();   
+            var fieldOfView = GetFieldOfView();
+            return result.Where(c => fieldOfView.Contains(c));
         }
 
         public virtual IEnumerable<(int, int)> GetFieldOfView()
         {
-            return GM.Map.GetArea(X, Y, FieldOfView, true).GetCoords();
+            List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, FieldOfView, true);
+            return coordsWithDist.Where(c =>
+                c.Item3 + GetInvisibilityBonus(GM.Map.TerrainTypes[c.Item1, c.Item2]) <= FieldOfView).GetCoords();
         }
 
         public void TryAttack(int toX, int toY)

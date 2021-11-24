@@ -10,7 +10,6 @@ namespace Prevoid.View.Renderers
     public class MapRenderer : Renderer
     {
         public Map Map { get; private set; }
-        private List<(int, int)> _FieldOfView;
 
         public MapRenderer(ScreenDrawer screenDrawer, Map map) : base(screenDrawer)
         {
@@ -69,10 +68,7 @@ namespace Prevoid.View.Renderers
 
         public void RecacheAndRedrawFieldOfView()
         {
-            List<(int, int)> oldFieldOfView = _FieldOfView ?? new();
-            _FieldOfView = GM.CurrentPlayer.GetFieldOfView().ToList();
-            oldFieldOfView.AddRange(_FieldOfView); // TODO: Replace with full outer join
-            RenderFields(oldFieldOfView.Distinct());
+            RenderFields(GM.RecacheFieldOfView());
         }
 
         private ConsoleColor GetOverlayColor(OverlayType overlayType)
@@ -116,7 +112,7 @@ namespace Prevoid.View.Renderers
 
         private (SpriteType, IHarmable) GetSpriteTypeAndIHarmableAt(int x, int y)
         {
-            if (!_FieldOfView.Contains((x, y)))
+            if (!GM.FieldOfView.Contains((x, y)))
             {
                 return (SpriteType.FogOfWar, null);
             }

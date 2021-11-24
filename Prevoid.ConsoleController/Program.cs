@@ -27,8 +27,8 @@ class Program
         GM.Map.SetUnit(new Tank(GM.Player1), 16, 17);
         GM.Map.SetUnit(new Tank(GM.Player2), 12, 13);
         GM.Map.SetUnit(new Tank(GM.Player2), 14, 13);
-        GM.NextTurn();
-        GM.NextTurn();
+
+        GM.Start();
 
         bool goOn = true;
         while (goOn)

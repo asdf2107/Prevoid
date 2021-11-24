@@ -1,6 +1,7 @@
 ﻿using Prevoid.Model.MapGeneration.MapGenStrategies;
 using Prevoid.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Prevoid.Model
@@ -10,13 +11,14 @@ namespace Prevoid.Model
         public static event Action TurnChanged;
         public static event Action<Unit> SelectedUnitChanged;
 
-        public static readonly Random Random = new Random();
-        public static readonly CommandHandler CommandHandler = new CommandHandler();
-        public static Map Map;
-        public static Player Player1;
-        public static Player Player2;
-        public static Player CurrentPlayer;
-        public static GameState GameState;
+        public static readonly Random Random = new();
+        public static readonly CommandHandler CommandHandler = new();
+        public static Map Map { get; private set; }
+        public static Player Player1 { get; private set; }
+        public static Player Player2 { get; private set; }
+        public static Player CurrentPlayer { get; private set; }
+        public static List<(int, int)> FieldOfView { get; private set; }
+        public static GameState GameState { get; private set; }
         private static Unit _SelectedUnit;
         public static Unit SelectedUnit
         {
@@ -35,6 +37,29 @@ namespace Prevoid.Model
             Player1 = new Player(1, ConsoleColor.Blue);
             Player2 = new Player(2, ConsoleColor.Red);
             CurrentPlayer = Player1;
+        }
+
+        public static void Start()
+        {
+            GameState = GameState.Movement;
+            TurnChanged.Invoke();
+        }
+
+        /// <summary>
+        /// Recache FieldOfView of current player.
+        /// </summary>
+        /// <returns>Coords wich are different</returns>
+        public static IEnumerable<(int, int)> RecacheFieldOfView()
+        {
+            List<(int, int)> oldFieldOfView = FieldOfView ?? new();
+            FieldOfView = CurrentPlayer.GetFieldOfView().ToList();
+            oldFieldOfView.AddRange(FieldOfView); // TODO: Replace with full outer join
+            return oldFieldOfView.Distinct();
+        }
+
+        public static bool CanCurrentPlayerSee(int x, int y)
+        {
+            return FieldOfView.Contains((x, y));
         }
 
         public static void NextTurn()
