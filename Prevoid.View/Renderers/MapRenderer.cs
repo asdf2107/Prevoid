@@ -3,16 +3,19 @@ using Prevoid.Model.EventArgs;
 using Prevoid.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Prevoid.View.Renderers
 {
     public class MapRenderer : Renderer
     {
         public Map Map { get; private set; }
+        private List<(int, int)> _FieldOfView;
 
         public MapRenderer(ScreenDrawer screenDrawer, Map map) : base(screenDrawer)
         {
             Map = map;
+            RecacheAndRedrawFieldOfView();
         }
 
         public void RenderMap()
@@ -64,12 +67,20 @@ namespace Prevoid.View.Renderers
             RenderFields(overlay.GetFields());
         }
 
+        public void RecacheAndRedrawFieldOfView()
+        {
+            List<(int, int)> oldFieldOfView = _FieldOfView ?? new();
+            _FieldOfView = GM.CurrentPlayer.GetFieldOfView().ToList();
+            oldFieldOfView.AddRange(_FieldOfView); // TODO: Replace with full outer join
+            RenderFields(oldFieldOfView.Distinct());
+        }
+
         private ConsoleColor GetOverlayColor(OverlayType overlayType)
         {
             return overlayType switch
             {
                 OverlayType.Select => Constants.SelectOverlayColor,
-                OverlayType.Forbidden => Constants.EnemyMoveAttackOverlayColor,
+                OverlayType.Forbidden => Constants.ForbiddenOverlayColor,
                 OverlayType.Move => Constants.MoveOverlayColor,
                 OverlayType.Attack => Constants.AttackOverlayColor,
                 _ => throw new NotImplementedException(),
@@ -105,6 +116,11 @@ namespace Prevoid.View.Renderers
 
         private (SpriteType, IHarmable) GetSpriteTypeAndIHarmableAt(int x, int y)
         {
+            if (!_FieldOfView.Contains((x, y)))
+            {
+                return (SpriteType.FogOfWar, null);
+            }
+
             if (Map.Fields[x, y] != null)
             {
                 return (Map.Fields[x, y].SpriteType, Map.Fields[x, y]);
@@ -139,6 +155,11 @@ namespace Prevoid.View.Renderers
                 SpriteType.Empty => new Symbol
                 {
                     BackColor = Constants.TerrainColor,
+                    Text = "  ",
+                },
+                SpriteType.FogOfWar => new Symbol
+                {
+                    BackColor = Constants.FogOfWarColor,
                     Text = "  ",
                 },
                 SpriteType.Mountain => new Symbol

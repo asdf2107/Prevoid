@@ -49,10 +49,11 @@ namespace Prevoid.Model
         /// <param name="y">Y coordinate of circle center</param>
         /// <param name="range">Radius of the circle</param>
         /// <returns>Collection of tuples of formst (X, Yance from center)</returns>
-        public List<(int, int, int)> GetArea(int x, int y, int range)
+        public List<(int, int, int)> GetArea(int x, int y, int range, bool includeCenter = false)
         {
             List<(int, int, int)> result = new List<(int, int, int)>();
             int dist = 0;
+            if (includeCenter) Add(x, y);
 
             if (range >= 1)
             {

@@ -15,18 +15,5 @@ namespace Prevoid.Model
         {
             return coordsWithDist.Select(c => (c.Item1, c.Item2));
         }
-
-        public static int GetMovementBonus(this TerrainType terrainType)
-        {
-            return terrainType switch
-            {
-                TerrainType.Flat => 0,
-                TerrainType.SparceForest => -1,
-                TerrainType.DeepForest => -2,
-                TerrainType.Mountain => -2,
-                TerrainType.Water => Constants.ImpossibleValue,
-                _ => throw new NotImplementedException(),
-            };
-        }
     }
 }

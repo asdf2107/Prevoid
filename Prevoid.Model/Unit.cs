@@ -1,5 +1,6 @@
 ﻿using Prevoid.Model.Commands;
 using Prevoid.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,13 +17,14 @@ namespace Prevoid.Model
         public bool HasMoved { get; private set; }
         public bool HasAttacked { get; private set; }
         public int MoveRange { get; protected set; }
+        public int FieldOfView { get; protected set; }
         public Weapon Weapon { get; protected set; }
         public float MaxHp { get; protected set; }
         public float Hp { get; protected set; }
 
         protected List<Effect> _Effects = new List<Effect>();
 
-        public Unit(Player player, int moveRange, float maxHP, SpriteType spriteType, Weapon weapon = null)
+        public Unit(Player player, int moveRange, float maxHP, SpriteType spriteType, int fieldOfView, Weapon weapon = null)
         {
             Player = player;
 
@@ -30,6 +32,7 @@ namespace Prevoid.Model
             MaxHp = maxHP;
             Hp = MaxHp;
             SpriteType = spriteType;
+            FieldOfView = fieldOfView;
             Weapon = weapon;
 
             GM.TurnChanged += HandleNextTurn;
@@ -62,8 +65,21 @@ namespace Prevoid.Model
         {
             List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, MoveRange);
             coordsWithDist.RemoveAll(c => GM.Map.Fields[c.Item1, c.Item2] != null
-                || c.Item3 - GM.Map.TerrainTypes[c.Item1, c.Item2].GetMovementBonus() > MoveRange);
+                || c.Item3 - GetMovementBonus(GM.Map.TerrainTypes[c.Item1, c.Item2]) > MoveRange);
             return coordsWithDist.GetCoords();
+        }
+
+        public virtual int GetMovementBonus(TerrainType terrainType)
+        {
+            return terrainType switch
+            {
+                TerrainType.Flat => 0,
+                TerrainType.SparceForest => -1,
+                TerrainType.DeepForest => -2,
+                TerrainType.Mountain => -2,
+                TerrainType.Water => Constants.ImpossibleValue,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         public virtual IEnumerable<(int, int)> GetAttackArea()
@@ -76,6 +92,11 @@ namespace Prevoid.Model
             List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
             return coordsWithDist.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
                 && GM.Map.Fields[c.Item1, c.Item2].Player != Player).GetCoords();     
+        }
+
+        public virtual IEnumerable<(int, int)> GetFieldOfView()
+        {
+            return GM.Map.GetArea(X, Y, FieldOfView, true).GetCoords();
         }
 
         public void TryAttack(int toX, int toY)

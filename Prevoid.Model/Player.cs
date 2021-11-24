@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Prevoid.Model
 {
@@ -11,6 +13,23 @@ namespace Prevoid.Model
         {
             Id = id;
             Color = color;
+        }
+
+        public IEnumerable<Unit> GetUnits()
+        {
+            return GM.Map.Fields.Cast<Unit>().Where(u => u?.Player.Id == Id);
+        }
+
+        public IEnumerable<(int, int)> GetFieldOfView()
+        {
+            List<(int, int)> result = new();
+            var units = GetUnits();
+            foreach (var unit in units)
+            {
+                result.AddRange(unit.GetFieldOfView());
+            }
+
+            return result.Distinct();
         }
     }
 }

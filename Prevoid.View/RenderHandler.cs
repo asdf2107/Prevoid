@@ -52,6 +52,7 @@ namespace Prevoid.View
 
         private void RenderTurnChange()
         {
+            _MapRenderer.RecacheAndRedrawFieldOfView();
             _MapRenderer.RenderMap();
             _HelpForm.SetInnerText();
             _FormRenderer.Render(_HelpForm);
@@ -72,6 +73,7 @@ namespace Prevoid.View
 
         private void RenderMoveCommand(MoveCommand command)
         {
+            _MapRenderer.RecacheAndRedrawFieldOfView();
             _MapRenderer.RenderFields(new[] { (command.FromX, command.FromY), (command.ToX, command.ToY) });
         }
 

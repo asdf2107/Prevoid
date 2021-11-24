@@ -9,8 +9,7 @@ namespace Prevoid.Model
         {
             get
             {
-                char res = Math.Round(Hp).ToString()[0];
-                return res == '0' ? '1' : res;
+                return Math.Truncate(Hp).ToString()[0];
             }
         }
         Player Player { get; }
