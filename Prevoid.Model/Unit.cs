@@ -11,9 +11,11 @@ namespace Prevoid.Model
         public int Y { get; protected set; } = -1;
         public SpriteType SpriteType { get; private set; }
         public Player Player { get; private set; }
-        public bool CanMove { get => MoveRange > 0; }
+        public bool CanMove { get => !HasMoved && MoveRange > 0; }
+        public bool CanAttack { get => !HasAttacked && Weapon != null; }
+        public bool HasMoved { get; private set; }
+        public bool HasAttacked { get; private set; }
         public int MoveRange { get; protected set; }
-        public bool CanAttack { get => Weapon != null; }
         public Weapon Weapon { get; protected set; }
         public float MaxHp { get; protected set; }
         public float Hp { get; protected set; }
@@ -29,6 +31,14 @@ namespace Prevoid.Model
             Hp = MaxHp;
             SpriteType = spriteType;
             Weapon = weapon;
+
+            GM.TurnChanged += HandleNextTurn;
+        }
+
+        private void HandleNextTurn()
+        {
+            HasMoved = false;
+            HasAttacked = false;
         }
 
         public void SetCoords(int x, int y)
@@ -37,9 +47,15 @@ namespace Prevoid.Model
             Y = y;
         }
 
-        public void Move(int toX, int toY)
+        public void TryMove(int toX, int toY)
+        {
+            if (CanMove) Move(toX, toY);
+        }
+
+        private void Move(int toX, int toY)
         {
             GM.CommandHandler.HandleCommand(new MoveCommand(this, toX, toY));
+            HasMoved = true;
         }
 
         public virtual IEnumerable<(int, int)> GetMoveArea()
@@ -62,9 +78,15 @@ namespace Prevoid.Model
                 && GM.Map.Fields[c.Item1, c.Item2].Player != Player).GetCoords();     
         }
 
-        public void Attack(int atX, int atY)
+        public void TryAttack(int toX, int toY)
+        {
+            if (CanAttack) Attack(toX, toY);
+        }
+
+        private void Attack(int atX, int atY)
         {
             GM.CommandHandler.HandleCommand(new AttackCommand(this, atX, atY, CalculateDamage(), Weapon.DamageType));
+            HasAttacked = true;
         }
 
         public void Harm(float damage)

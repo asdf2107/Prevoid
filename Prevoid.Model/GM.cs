@@ -98,20 +98,26 @@ namespace Prevoid.Model
             if (SelectedUnit is null)
             {
                 var unit = Map.GetUnitAtSelection();
-                if (unit?.Player == CurrentPlayer) SelectedUnit = unit;
+                if (unit?.Player == CurrentPlayer)
+                {
+                    if ((GameState == GameState.Movement && unit.CanMove) || (GameState == GameState.Attack && unit.CanAttack))
+                    {
+                        SelectedUnit = unit;
+                    }
+                }
             }
             else
             {
                 if (GameState == GameState.Movement
                     && SelectedUnit.GetMoveArea().Contains((Map.Selection.Item1, Map.Selection.Item2)))
                 {
-                    SelectedUnit.Move(Map.Selection.Item1, Map.Selection.Item2);
+                    SelectedUnit.TryMove(Map.Selection.Item1, Map.Selection.Item2);
                     SelectedUnit = null;
                 }
                 else if (GameState == GameState.Attack
                     && SelectedUnit.GetAttackTargets().Contains(((ILocateable)Map.GetUnitAtSelection())?.Coords ?? (-1, -1)))
                 {
-                    SelectedUnit.Attack(Map.Selection.Item1, Map.Selection.Item2);
+                    SelectedUnit.TryAttack(Map.Selection.Item1, Map.Selection.Item2);
                     SelectedUnit = null;
                 }
             }

@@ -69,7 +69,7 @@ namespace Prevoid.View.Renderers
             return overlayType switch
             {
                 OverlayType.Select => Constants.SelectOverlayColor,
-                OverlayType.EnemyMoveAttack => Constants.EnemyMoveAttackOverlayColor,
+                OverlayType.Forbidden => Constants.EnemyMoveAttackOverlayColor,
                 OverlayType.Move => Constants.MoveOverlayColor,
                 OverlayType.Attack => Constants.AttackOverlayColor,
                 _ => throw new NotImplementedException(),

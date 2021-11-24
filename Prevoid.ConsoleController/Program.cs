@@ -3,30 +3,37 @@ using Prevoid.Model.Units;
 using Prevoid.View;
 using System;
 
-namespace Prevoid.ConsoleController
+namespace Prevoid.ConsoleController;
+
+class Program
 {
-    class Program
+    static void Main()
     {
-        static void Main()
+        Console.CursorVisible = false;
+        Console.Title = "Prevoid";
+
+#pragma warning disable CA1416
+        try
         {
-            Console.CursorVisible = false;
-            Console.Title = "Prevoid";
             Console.WindowHeight = 31;
-            RenderHandler rh = new RenderHandler();
-            _ = rh.StartRenderingAsync();
+        }
+        catch (PlatformNotSupportedException) { }
+#pragma warning restore CA1416
 
-            GM.Map.SetUnit(new Tank(GM.Player1), 16, 19);
-            GM.Map.SetUnit(new Tank(GM.Player1), 16, 17);
-            GM.Map.SetUnit(new Tank(GM.Player2), 12, 13);
-            GM.Map.SetUnit(new Tank(GM.Player2), 14, 13);
-            GM.NextTurn();
-            GM.NextTurn();
+        RenderHandler rh = new RenderHandler();
+        _ = rh.StartRenderingAsync();
 
-            bool goOn = true;
-            while (goOn)
-            {
-                goOn = GM.HandleInput(Console.ReadKey(true));
-            }
+        GM.Map.SetUnit(new Tank(GM.Player1), 16, 19);
+        GM.Map.SetUnit(new Tank(GM.Player1), 16, 17);
+        GM.Map.SetUnit(new Tank(GM.Player2), 12, 13);
+        GM.Map.SetUnit(new Tank(GM.Player2), 14, 13);
+        GM.NextTurn();
+        GM.NextTurn();
+
+        bool goOn = true;
+        while (goOn)
+        {
+            goOn = GM.HandleInput(Console.ReadKey(true));
         }
     }
 }

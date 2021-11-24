@@ -3,7 +3,7 @@
     public enum OverlayType
     {
         Select,
-        EnemyMoveAttack,
+        Forbidden,
         Move,
         Attack,
     }

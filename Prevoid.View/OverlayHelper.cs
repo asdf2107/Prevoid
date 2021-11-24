@@ -26,9 +26,9 @@ namespace Prevoid.View
 
                 if (unit is not null)
                 {
-                    if (unit.Player != GM.CurrentPlayer)
+                    if (unit.Player != GM.CurrentPlayer || !unit.CanMove)
                     {
-                        overlay.SetOverlayType(OverlayType.EnemyMoveAttack);
+                        overlay.SetOverlayType(OverlayType.Forbidden);
                     }
 
                     overlay.Add(unit.GetMoveArea());
@@ -52,7 +52,8 @@ namespace Prevoid.View
                 }
                 else if (unit is not null)
                 {
-                    overlay.SetOverlayType(unit.Player == GM.CurrentPlayer ? OverlayType.Attack : OverlayType.EnemyMoveAttack);
+                    overlay.SetOverlayType(unit.Player == GM.CurrentPlayer && unit.CanAttack ? 
+                        OverlayType.Attack : OverlayType.Forbidden);
                     overlay.Add(unit.GetAttackArea());
                 }
             }
