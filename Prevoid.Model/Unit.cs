@@ -8,6 +8,7 @@ namespace Prevoid.Model
 {
     public abstract class Unit : ILocateable, IVisible, IHarmable
     {
+        public string Name { get; private set; }
         public int X { get; protected set; } = -1;
         public int Y { get; protected set; } = -1;
         public SpriteType SpriteType { get; private set; }
@@ -24,9 +25,10 @@ namespace Prevoid.Model
 
         protected List<Effect> _Effects = new List<Effect>();
 
-        public Unit(Player player, int moveRange, float maxHP, SpriteType spriteType, int fieldOfView, Weapon weapon = null)
+        public Unit(Player player, string name, int moveRange, float maxHP, SpriteType spriteType, int fieldOfView, Weapon weapon = null)
         {
             Player = player;
+            Name = name;
 
             MoveRange = moveRange;
             MaxHp = maxHP;

@@ -8,6 +8,7 @@ namespace Prevoid.View.Renderers
 
         public void Render(Form form)
         {
+            form.SetInnerText();
             _Drawer.Draw(form.GetRenderView());
         }
     }

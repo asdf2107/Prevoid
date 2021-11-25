@@ -15,7 +15,8 @@ namespace Prevoid.View
         private readonly Overlay _MoveAreaOverlay;
         private readonly Overlay _AttackAreaOverlay;
 
-        private readonly Form _HelpForm;
+        private readonly HelpForm _HelpForm;
+        private readonly UnitInfoForm _UnitInfoForm;
 
         private readonly OverlayHelper _OverlayHelper;
         private readonly MapRenderer _MapRenderer;
@@ -31,6 +32,7 @@ namespace Prevoid.View
             _AttackAreaOverlay = new Overlay(OverlayType.Attack);
 
             _HelpForm = new HelpForm(62, 24, 56, 6);
+            _UnitInfoForm = new UnitInfoForm(62, 0, 20, 22);
 
             GM.TurnChanged += RenderTurnChange;
             GM.Map.SelectionMoved += RenderSelectionMove;
@@ -54,7 +56,6 @@ namespace Prevoid.View
         {
             _MapRenderer.RecacheAndRedrawFieldOfView();
             _MapRenderer.RenderMap();
-            _HelpForm.SetInnerText();
             _FormRenderer.Render(_HelpForm);
         }
 
@@ -63,6 +64,8 @@ namespace Prevoid.View
             _MapRenderer.RenderFields(new[] { (eventArgs.FromX, eventArgs.FromY), (eventArgs.ToX, eventArgs.ToY) });           
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
             _OverlayHelper.UpdateAttackAreaOverlay(_AttackAreaOverlay);
+            _UnitInfoForm.SetUnit(GM.PointedUnit);
+            _FormRenderer.Render(_UnitInfoForm); // TODO: Rerender only if PointedUnit changes
         }
 
         private void RenderSelectedUnitChange(Unit unit)

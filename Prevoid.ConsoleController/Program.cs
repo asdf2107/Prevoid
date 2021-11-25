@@ -2,6 +2,7 @@
 using Prevoid.Model.Units;
 using Prevoid.View;
 using System;
+using System.Globalization;
 
 namespace Prevoid.ConsoleController;
 
@@ -11,6 +12,10 @@ class Program
     {
         Console.CursorVisible = false;
         Console.Title = "Prevoid";
+        
+        CultureInfo customCulture = (CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+        customCulture.NumberFormat.NumberDecimalSeparator = ".";
+        System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
 #pragma warning disable CA1416
         try

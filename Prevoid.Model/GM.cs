@@ -20,6 +20,9 @@ namespace Prevoid.Model
         public static List<(int, int)> FieldOfView { get; private set; }
         public static GameState GameState { get; private set; }
         private static Unit _SelectedUnit;
+        /// <summary>
+        /// Unit which was selected
+        /// </summary>
         public static Unit SelectedUnit
         {
             get { return _SelectedUnit; }
@@ -28,6 +31,13 @@ namespace Prevoid.Model
                 _SelectedUnit = value;
                 SelectedUnitChanged?.Invoke(_SelectedUnit);
             }
+        }
+        /// <summary>
+        /// Unit under the selection
+        /// </summary>
+        public static Unit PointedUnit
+        {
+            get { return Map.Fields[Map.Selection.Item1, Map.Selection.Item2]; }
         }
 
         static GM()

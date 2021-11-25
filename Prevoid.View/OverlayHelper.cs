@@ -21,7 +21,7 @@ namespace Prevoid.View
 
             if  (GM.GameState == GameState.Movement)
             {
-                var unit = GM.SelectedUnit ?? Map.Fields[Map.Selection.Item1, Map.Selection.Item2];
+                var unit = GM.SelectedUnit ?? GM.PointedUnit;
                 overlay.SetOverlayType(GM.SelectedUnit is null ? OverlayType.Move : OverlayType.Select);
 
                 if (unit is not null && GM.CanCurrentPlayerSee(unit.X, unit.Y))
@@ -43,7 +43,7 @@ namespace Prevoid.View
             if (GM.GameState == GameState.Attack)
             {
                 var chosenUnit = GM.SelectedUnit;
-                var unit = Map.Fields[Map.Selection.Item1, Map.Selection.Item2];
+                var unit = GM.PointedUnit;
 
                 if (chosenUnit is not null)
                 {

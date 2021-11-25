@@ -10,8 +10,11 @@ namespace Prevoid.View
         public int X { get; private set; }
         public int Y { get; private set; }
         public int Width { get; private set; }
+        public int InnerWidth { get { return Width - SideInterval * 2; } }
         public int Height { get; private set; }
+        public int InnerHeight { get { return Height - VerticalInterval * 2; } }
         public int SideInterval { get; protected set; } = 2;
+        public int VerticalInterval { get; protected set; } = 1;
         public BoxCharSet BoxCharSet { get; set; }
         public List<List<Symbol>> InnerText { get; protected set; } = EmptyText;
         protected Symbol _CachedUpperBound;
@@ -50,7 +53,7 @@ namespace Prevoid.View
                 result.Add(new LocatedSymbol
                 {
                     ScreenX = X,
-                    ScreenY = Y + 1 + i,
+                    ScreenY = Y + VerticalInterval + i,
                     Symbol = _CachedVerticalStart,
                 });
 
@@ -61,7 +64,7 @@ namespace Prevoid.View
                     result.Add(new LocatedSymbol
                     {
                         ScreenX = X + SideInterval + lineLength,
-                        ScreenY = Y + 1 + i,
+                        ScreenY = Y + VerticalInterval + i,
                         Symbol = InnerText[i][j],
                     });
 
@@ -75,7 +78,7 @@ namespace Prevoid.View
                     result.Add(new LocatedSymbol
                     {
                         ScreenX = X + SideInterval + lineLength,
-                        ScreenY = Y + 1 + i,
+                        ScreenY = Y + VerticalInterval + i,
                         Symbol = Symbol.FromText(new string(' ', leftTillLineEnd)),
                     });
                 }
@@ -83,7 +86,7 @@ namespace Prevoid.View
                 result.Add(new LocatedSymbol
                 {
                     ScreenX = X + Width - 1,
-                    ScreenY = Y + 1 + i,
+                    ScreenY = Y + VerticalInterval + i,
                     Symbol = _CachedVerticalEnd,
                 });
             }
@@ -105,6 +108,19 @@ namespace Prevoid.View
                 ScreenY = Y + Height,
                 Symbol = _CachedLowerBound,
             });
+
+            return result;
+        }
+
+        protected List<List<Symbol>> GetClearText()
+        {
+            var symbol = Symbol.FromText(new string(' ', InnerWidth));
+            List<List<Symbol>> result = new();
+
+            for (int i = 0; i < Height; i++)
+            {
+                result.Add(new() { symbol });
+            }
 
             return result;
         }
