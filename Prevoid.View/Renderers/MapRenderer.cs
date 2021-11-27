@@ -95,8 +95,8 @@ namespace Prevoid.View.Renderers
 
         private Symbol GetSymbolAt(int x, int y, ConsoleColor? overlayColor)
         {
-            var (spriteType, harmable) = GetSpriteTypeAndIHarmableAt(x, y);
-            var symbol = GetSymbolFromSpriteType(spriteType, harmable);
+            var (spriteTypeWithVisibility, harmable) = GetSpriteTypeWithVisibilityAndIHarmableAt(x, y);
+            var symbol = GetSymbolFromSpriteTypeWithVisibility(spriteTypeWithVisibility, harmable);
 
             if (Map.Selection.Item1 == x && Map.Selection.Item2 == y && !GM.HasTurnEnded)
             {
@@ -110,24 +110,21 @@ namespace Prevoid.View.Renderers
             return symbol;
         }
 
-        private (SpriteType, IHarmable) GetSpriteTypeAndIHarmableAt(int x, int y)
+        private (SpriteTypeWithVisibility, IHarmable) GetSpriteTypeWithVisibilityAndIHarmableAt(int x, int y)
         {
-            if (!GM.CanCurrentPlayerSee(x, y))
-            {
-                return (SpriteType.FogOfWar, null);
-            }
+            bool visible = GM.CanCurrentPlayerSee(x, y);
 
-            if (Map.Fields[x, y] != null)
+            if (Map.Fields[x, y] != null && visible)
             {
-                return (Map.Fields[x, y].SpriteType, Map.Fields[x, y]);
+                return (new SpriteTypeWithVisibility(Map.Fields[x, y].SpriteType, visible), Map.Fields[x, y]);
             }
-            else if (Map.Structures[x, y] != null)
+            else if (Map.Structures[x, y] != null && visible)
             {
-                return (Map.Structures[x, y].SpriteType, Map.Structures[x, y] as IHarmable);
+                return (new SpriteTypeWithVisibility(Map.Structures[x, y].SpriteType, visible), Map.Structures[x, y] as IHarmable);
             }
             else
             {
-                return (GetSpriteTypeFromTerrain(x, y), null);
+                return (new SpriteTypeWithVisibility(GetSpriteTypeFromTerrain(x, y), visible), null);
             }
         }
 
@@ -144,9 +141,9 @@ namespace Prevoid.View.Renderers
             };
         }
 
-        private Symbol GetSymbolFromSpriteType(SpriteType spriteType, IHarmable harmable)
+        private Symbol GetSymbolFromSpriteTypeWithVisibility(SpriteTypeWithVisibility spriteTypeWithVisibility, IHarmable harmable)
         {
-            return spriteType switch
+            var result = spriteTypeWithVisibility.SpriteType switch
             {
                 SpriteType.Empty => new Symbol
                 {
@@ -196,6 +193,20 @@ namespace Prevoid.View.Renderers
                 },
                 _ => throw new NotImplementedException(),
             };
+
+            if (spriteTypeWithVisibility.IsVisible)
+            {
+                return result;
+            }
+            else
+            {
+                return new Symbol
+                {
+                    ForeColor = Constants.FogOfWarForeColor,
+                    BackColor = Constants.FogOfWarColor,
+                    Text = result.Text,
+                };
+            }
         }
     }
 }

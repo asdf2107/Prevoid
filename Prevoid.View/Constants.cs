@@ -6,6 +6,7 @@ namespace Prevoid.View
     public static class Constants
     {
         public const ConsoleColor FogOfWarColor = ConsoleColor.Gray;
+        public const ConsoleColor FogOfWarForeColor = ConsoleColor.DarkGray;
         public const ConsoleColor TerrainColor = ConsoleColor.Black;
         public const ConsoleColor ForestColor = ConsoleColor.DarkGreen;
         public const ConsoleColor MountainColor = ConsoleColor.Gray;
