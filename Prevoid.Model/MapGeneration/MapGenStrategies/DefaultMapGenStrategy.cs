@@ -18,6 +18,18 @@ namespace Prevoid.Model.MapGeneration.MapGenStrategies
                     map.TerrainTypes[i, j] = GetTerrainType(Noise2d.Noise(i * frequency, j * frequency));
                 }
             }
+
+            Noise2d.Reseed(seed + 1);
+
+            for (int j = 0; j < map.Height; j++)
+            {
+                for (int i = 0; i < map.Width; i++)
+                {
+                    if (map.TerrainTypes[i, j] != TerrainType.Water)
+                        map.TerrainTypes[i, j] = Noise2d.Noise(i * frequency, j * frequency) > 0.4f ? 
+                            TerrainType.Mountain : map.TerrainTypes[i, j];
+                }
+            }
         }
 
         private TerrainType GetTerrainType(float val)
