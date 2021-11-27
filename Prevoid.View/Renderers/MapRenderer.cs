@@ -98,7 +98,7 @@ namespace Prevoid.View.Renderers
             var (spriteType, harmable) = GetSpriteTypeAndIHarmableAt(x, y);
             var symbol = GetSymbolFromSpriteType(spriteType, harmable);
 
-            if (Map.Selection.Item1 == x && Map.Selection.Item2 == y)
+            if (Map.Selection.Item1 == x && Map.Selection.Item2 == y && !GM.HasTurnEnded)
             {
                 return symbol.GetTranslucent(Constants.SelectionColor);
             }

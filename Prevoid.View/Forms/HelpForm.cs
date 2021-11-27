@@ -7,7 +7,12 @@ namespace Prevoid.View.Forms
     {
         private readonly List<List<Symbol>> MoveHelpText = new()
         {
-            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn [Movement]") },
+            new() 
+            {
+                Symbol.FromText("[player]"), 
+                Symbol.FromText("'s turn "),
+                Symbol.FromText("[Movement]", Constants.MoveOverlayColor),
+            },
             new() 
             { 
                 Symbol.FromText("Move your units. Use "),
@@ -35,7 +40,12 @@ namespace Prevoid.View.Forms
 
         private readonly List<List<Symbol>> AttackHelpText = new()
         {
-            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn. [Attack]") },
+            new() 
+            { 
+                Symbol.FromText("[player]"), 
+                Symbol.FromText("'s turn. "),
+                Symbol.FromText("[Attack]", Constants.AttackOverlayColor),
+            },
             new()
             {
                 Symbol.FromText("Attack enemy units. Use "),
