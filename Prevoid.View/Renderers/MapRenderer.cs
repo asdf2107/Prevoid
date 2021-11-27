@@ -112,7 +112,7 @@ namespace Prevoid.View.Renderers
 
         private (SpriteType, IHarmable) GetSpriteTypeAndIHarmableAt(int x, int y)
         {
-            if (!GM.FieldOfView.Contains((x, y)))
+            if (!GM.CanCurrentPlayerSee(x, y))
             {
                 return (SpriteType.FogOfWar, null);
             }
@@ -187,6 +187,12 @@ namespace Prevoid.View.Renderers
                     ForeColor = harmable.Player.Color,
                     BackColor = Constants.TerrainColor,
                     Text = "T" + harmable.HpChar,
+                },
+                SpriteType.Base => new Symbol
+                {
+                    ForeColor = harmable.Player.Color,
+                    BackColor = Constants.TerrainColor,
+                    Text = "B" + harmable.HpChar,
                 },
                 _ => throw new NotImplementedException(),
             };

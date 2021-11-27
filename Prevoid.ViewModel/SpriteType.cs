@@ -9,6 +9,7 @@
         DeepForest,
         Mountain,
         Water,
+        Base,
         Soldiers,
         Tank,
     }

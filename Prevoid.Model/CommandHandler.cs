@@ -7,6 +7,7 @@ namespace Prevoid.Model
     {
         public event Action<MoveCommand> NeedMoveCommandRender;
         public event Action<AttackCommand> NeedAttackCommandRender;
+        public event Action<SetUnitCommand> NeedSetUnitCommandRender;
 
         public void HandleCommand(Command command)
         {
@@ -19,6 +20,11 @@ namespace Prevoid.Model
             {
                 AttackUnit(attackCommand);
                 if (command.NeedRender) NeedAttackCommandRender?.Invoke(attackCommand);
+            }
+            else if (command is SetUnitCommand setUnitCommand)
+            {
+                SetUnit(setUnitCommand);
+                if (command.NeedRender) NeedSetUnitCommandRender?.Invoke(setUnitCommand);
             }
             else
             {
@@ -41,5 +47,11 @@ namespace Prevoid.Model
             }
             else throw new NotImplementedException();
         }
+
+        private void SetUnit(SetUnitCommand command)
+        {
+            GM.Map.SetUnit(command.Unit, command.AtX, command.AtY);
+        }
+
     }
 }

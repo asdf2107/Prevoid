@@ -14,9 +14,8 @@ namespace Prevoid.Model
         public SpriteType SpriteType { get; private set; }
         public Player Player { get; private set; }
         public bool CanMove { get => !HasMoved && MoveRange > 0; }
-        public bool CanAttack { get => !HasAttacked && Weapon != null; }
+        public bool CanAttack { get => Weapon != null && Weapon.Rounds > 0; }
         public bool HasMoved { get; private set; }
-        public bool HasAttacked { get; private set; }
         public int MoveRange { get; protected set; }
         public int FieldOfView { get; protected set; }
         public Weapon Weapon { get; protected set; }
@@ -43,7 +42,7 @@ namespace Prevoid.Model
         private void HandleNextTurn()
         {
             HasMoved = false;
-            HasAttacked = false;
+            Weapon?.RefillRounds();
         }
 
         public void SetCoords(int x, int y)
@@ -84,6 +83,22 @@ namespace Prevoid.Model
             };
         }
 
+        public void TrySet(int atX, int atY)
+        {
+            if (!GM.Map.ContainsUnit(this) && GetSetArea().Contains((atX, atY)))
+                Set(atX, atY);
+        }
+
+        private void Set(int toX, int toY)
+        {
+            GM.CommandHandler.HandleCommand(new SetUnitCommand(this, toX, toY));
+        }
+
+        public virtual IEnumerable<(int, int)> GetSetArea()
+        {
+            return GM.FieldOfView;
+        }
+
         protected virtual int GetInvisibilityBonus(TerrainType terrainType)
         {
             return terrainType switch
@@ -107,8 +122,7 @@ namespace Prevoid.Model
             List<(int, int, int)> coordsWithDist = GM.Map.GetArea(X, Y, Weapon?.AttackRange ?? 0);
             var result = coordsWithDist.Where(c => GM.Map.Fields[c.Item1, c.Item2] != null
                 && GM.Map.Fields[c.Item1, c.Item2].Player != Player).GetCoords();   
-            var fieldOfView = GetFieldOfView();
-            return result.Where(c => fieldOfView.Contains(c));
+            return result.Where(c => GM.CanCurrentPlayerSee(c));
         }
 
         public virtual IEnumerable<(int, int)> GetFieldOfView()
@@ -125,8 +139,8 @@ namespace Prevoid.Model
 
         private void Attack(int atX, int atY)
         {
+            Weapon.RemoveRound();
             GM.CommandHandler.HandleCommand(new AttackCommand(this, atX, atY, CalculateDamage(), Weapon.DamageType));
-            HasAttacked = true;
         }
 
         public void Harm(float damage)

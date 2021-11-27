@@ -7,7 +7,7 @@ namespace Prevoid.View.Forms
     {
         private readonly List<List<Symbol>> MoveHelpText = new()
         {
-            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn [Movement]")},
+            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn [Movement]") },
             new() 
             { 
                 Symbol.FromText("Move your units. Use "),
@@ -35,17 +35,17 @@ namespace Prevoid.View.Forms
 
         private readonly List<List<Symbol>> AttackHelpText = new()
         {
-            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn. [Attack]")},
-            new() 
-            { 
+            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn. [Attack]") },
+            new()
+            {
                 Symbol.FromText("Attack enemy units. Use "),
                 Symbol.FromText("WASD", Constants.HighlightTextColor),
                 Symbol.FromText(" or "),
                 Symbol.FromText("Arrow keys", Constants.HighlightTextColor),
                 Symbol.FromText(" to move"),
             },
-            new() 
-            { 
+            new()
+            {
                 Symbol.FromText("the cursor. To select a unit, press "),
                 Symbol.FromText("Enter", Constants.HighlightTextColor),
                 Symbol.FromText(" or "),
@@ -61,16 +61,29 @@ namespace Prevoid.View.Forms
             },
         };
 
+        private readonly List<List<Symbol>> TurnEndedHelpText = new ()
+        {
+            new () { Symbol.FromText("[player]"), Symbol.FromText("'s turn.") },
+            new () { Symbol.FromText("Press any key to continue...", Constants.HighlightTextColor) }
+        };
+
         public HelpForm(int x, int y, int width, int height) : base(x, y, width, height, Constants.ThinBoxCharSet) { }
 
         public override void SetInnerText()
         {
-            InnerText = GM.GameState switch
+            if (GM.HasTurnEnded)
             {
-                GameState.Movement => MoveHelpText,
-                GameState.Attack => AttackHelpText,
-                _ => EmptyText,
-            };
+                InnerText = TurnEndedHelpText;
+            }
+            else
+            {
+                InnerText = GM.GameState switch
+                {
+                    GameState.Movement => MoveHelpText,
+                    GameState.Attack => AttackHelpText,
+                    _ => EmptyText,
+                };
+            }
 
             InnerText[0][0] = new Symbol
             {

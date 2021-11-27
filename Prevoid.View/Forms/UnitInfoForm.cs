@@ -5,16 +5,16 @@ using System.Linq;
 
 namespace Prevoid.View.Forms
 {
-    public class UnitInfoForm : Form
+    public abstract class UnitInfoForm : Form
     {
-        public Unit Unit { get; private set; }
+        public Unit Unit { get; protected set; }
 
         private readonly List<List<Symbol>> MainText = new()
         {
             new() { Symbol.FromText("[unit name]") },
             new()
             {
-                Symbol.FromText("HP:      "),
+                Symbol.FromText("HP:    "),
                 Symbol.FromText("[v]", Constants.HighlightTextColor),
             },
             new()
@@ -29,12 +29,22 @@ namespace Prevoid.View.Forms
             },
             new()
             {
-                Symbol.FromText("Attack:  "),
+                Symbol.FromText("Weapon:"),
                 Symbol.FromText("[v]", Constants.HighlightTextColor),
             },
             new()
             {
-                Symbol.FromText("Range:   "),
+                Symbol.FromText("  Attack:"),
+                Symbol.FromText("[v]", Constants.HighlightTextColor),
+            },
+            new()
+            {
+                Symbol.FromText("  Rounds:"),
+                Symbol.FromText("[v]", Constants.HighlightTextColor),
+            },
+            new()
+            {
+                Symbol.FromText("  Range: "),
                 Symbol.FromText("[v]", Constants.HighlightTextColor),
             },
         };
@@ -44,13 +54,12 @@ namespace Prevoid.View.Forms
             MainText.Insert(1, new() { Symbol.FromText(new string(BoxCharSet.Hor, InnerWidth)) });
         }
 
-        public void SetUnit(Unit unit)
-        {
-            Unit = unit;
-        }
+        protected abstract void SetUnit();
 
         public override void SetInnerText()
         {
+            SetUnit();
+
             if (Unit is null)
             {
                 InnerText = GetClearText();
@@ -71,15 +80,24 @@ namespace Prevoid.View.Forms
             InnerText[2][1] = GetNumericDotValue(Unit.Hp, Unit.MaxHp);
             InnerText[3][1] = GetNumericSingleValue(Unit.MoveRange);
             InnerText[4][1] = GetNumericSingleValue(Unit.FieldOfView);
-            InnerText[5][1] = GetNumericDotValue(Unit.Weapon?.Damage ?? 0);
-            InnerText[6][1] = GetNumericSingleValue(Unit.Weapon?.AttackRange ?? 0);
+            if (Unit.Weapon is not null)
+            {
+                InnerText[5][1] = GetTextValue(Unit.Weapon.Name);
+                InnerText[6][1] = GetNumericDotValue(Unit.Weapon.Damage);
+                InnerText[7][1] = GetNumericSingleValue(Unit.Weapon.Rounds, Unit.Weapon.RoundsPerTurn);
+                InnerText[8][1] = GetNumericSingleValue(Unit.Weapon.AttackRange);
+            }
+            else
+            {
+                InnerText[5][1] = GetTextValue("[none]");
+            }
         }
 
         private static Symbol GetNumericDotValue(float current, float max = -1)
         {
             if (max >= 0)
             {
-                return Symbol.FromText($"{current.ToString("0.0")}/{max.ToString("0.0")}", Constants.HighlightTextColor);
+                return Symbol.FromText($"{current.ToString("0.0") + '/' + max.ToString("0.0"),9}", Constants.HighlightTextColor);
             }
             else
             {
@@ -87,10 +105,21 @@ namespace Prevoid.View.Forms
             }
         }
 
-        private static Symbol GetNumericSingleValue(float current)
+        private static Symbol GetNumericSingleValue(int current, int max = -1)
         {
-            return Symbol.FromText($"      {current.ToString("0")}", Constants.HighlightTextColor);
+            if (max >= 0)
+            {
+                return Symbol.FromText($"    {current}/{max}", Constants.HighlightTextColor);
+            }
+            else
+            {
+                return Symbol.FromText($"      {current}", Constants.HighlightTextColor);
+            }
         }
 
+        private static Symbol GetTextValue(string value)
+        {
+            return Symbol.FromText($"{value,9}", Constants.HighlightTextColor);
+        }
     }
 }

@@ -160,6 +160,19 @@ namespace Prevoid.Model
             return x >= 0 && y >= 0 && x < Width && y < Height;
         }
 
+        public bool ContainsUnit(Unit unit)
+        {
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    if (Fields[i, j] == unit) return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool TryMoveSelection(Direction direction)
         {
             int dx = (direction == Direction.West) ? -1 : (direction == Direction.East) ? 1 : 0;

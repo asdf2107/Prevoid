@@ -8,6 +8,7 @@ namespace Prevoid.Model
 {
     public static class GM
     {
+        public static event Action TurnEnded;
         public static event Action TurnChanged;
         public static event Action<Unit> SelectedUnitChanged;
 
@@ -17,8 +18,9 @@ namespace Prevoid.Model
         public static Player Player1 { get; private set; }
         public static Player Player2 { get; private set; }
         public static Player CurrentPlayer { get; private set; }
-        public static List<(int, int)> FieldOfView { get; private set; }
+        public static List<(int, int)> FieldOfView { get; set; }
         public static GameState GameState { get; private set; }
+        public static bool HasTurnEnded { get; private set; }
         private static Unit _SelectedUnit;
         /// <summary>
         /// Unit which was selected
@@ -52,7 +54,7 @@ namespace Prevoid.Model
         public static void Start()
         {
             GameState = GameState.Movement;
-            TurnChanged.Invoke();
+            TurnChanged?.Invoke();
         }
 
         /// <summary>
@@ -72,6 +74,11 @@ namespace Prevoid.Model
             return FieldOfView.Contains((x, y));
         }
 
+        public static bool CanCurrentPlayerSee((int, int) coords)
+        {
+            return FieldOfView.Contains(coords);
+        }
+
         public static void NextTurn()
         {
             if (CurrentPlayer == Player1)
@@ -85,7 +92,9 @@ namespace Prevoid.Model
                 GameState = GameState == GameState.Attack ? GameState.Movement : GameState.Attack;
             }
 
-            TurnChanged?.Invoke();
+            SelectedUnit = null;
+            HasTurnEnded = true;
+            TurnEnded?.Invoke();
         }
 
         /// <summary>
@@ -95,6 +104,13 @@ namespace Prevoid.Model
         /// <returns></returns>
         public static bool HandleInput(ConsoleKeyInfo keyInfo)
         {
+            if (HasTurnEnded)
+            {
+                HasTurnEnded = false;
+                TurnChanged?.Invoke();
+                return true;
+            }
+
             switch (keyInfo.Key)
             {
                 case ConsoleKey.W:
@@ -130,30 +146,37 @@ namespace Prevoid.Model
 
         private static void EnterPressed()
         {
-            if (SelectedUnit is null)
+            if (GameState == GameState.SettingUnits)
             {
-                var unit = Map.GetUnitAtSelection();
-                if (unit?.Player == CurrentPlayer)
-                {
-                    if ((GameState == GameState.Movement && unit.CanMove) || (GameState == GameState.Attack && unit.CanAttack))
-                    {
-                        SelectedUnit = unit;
-                    }
-                }
+                SelectedUnit.TrySet(Map.Selection.Item1, Map.Selection.Item2);
             }
             else
             {
-                if (GameState == GameState.Movement
-                    && SelectedUnit.GetMoveArea().Contains((Map.Selection.Item1, Map.Selection.Item2)))
+                if (SelectedUnit is null)
                 {
-                    SelectedUnit.TryMove(Map.Selection.Item1, Map.Selection.Item2);
-                    SelectedUnit = null;
+                    var unit = Map.GetUnitAtSelection();
+                    if (unit?.Player == CurrentPlayer)
+                    {
+                        if ((GameState == GameState.Movement && unit.CanMove) || (GameState == GameState.Attack && unit.CanAttack))
+                        {
+                            SelectedUnit = unit;
+                        }
+                    }
                 }
-                else if (GameState == GameState.Attack
-                    && SelectedUnit.GetAttackTargets().Contains(((ILocateable)Map.GetUnitAtSelection())?.Coords ?? (-1, -1)))
+                else
                 {
-                    SelectedUnit.TryAttack(Map.Selection.Item1, Map.Selection.Item2);
-                    SelectedUnit = null;
+                    if (GameState == GameState.Movement
+                        && SelectedUnit.GetMoveArea().Contains((Map.Selection.Item1, Map.Selection.Item2)))
+                    {
+                        SelectedUnit.TryMove(Map.Selection.Item1, Map.Selection.Item2);
+                        SelectedUnit = null;
+                    }
+                    else if (GameState == GameState.Attack
+                        && SelectedUnit.GetAttackTargets().Contains(((ILocateable)Map.GetUnitAtSelection())?.Coords ?? (-1, -1)))
+                    {
+                        SelectedUnit.TryAttack(Map.Selection.Item1, Map.Selection.Item2);
+                        if (!SelectedUnit.CanAttack) SelectedUnit = null;
+                    }
                 }
             }
         }

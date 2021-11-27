@@ -25,8 +25,11 @@ class Program
         catch (PlatformNotSupportedException) { }
 #pragma warning restore CA1416
 
-        RenderHandler rh = new RenderHandler();
+        RenderHandler rh = new();
         _ = rh.StartRenderingAsync();
+
+        GM.Map.SetUnit(new Base(GM.Player1), 20, 20);
+        GM.Map.SetUnit(new Base(GM.Player2), 10, 10);
 
         GM.Map.SetUnit(new Tank(GM.Player1), 16, 19);
         GM.Map.SetUnit(new Tank(GM.Player1), 16, 17);

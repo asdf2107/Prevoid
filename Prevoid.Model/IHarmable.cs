@@ -9,7 +9,8 @@ namespace Prevoid.Model
         {
             get
             {
-                return Math.Truncate(Hp).ToString()[0];
+                double value = Math.Truncate(Hp);
+                return value >= 10 ? '+' : value.ToString()[0];
             }
         }
         Player Player { get; }
