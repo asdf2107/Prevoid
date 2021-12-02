@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prevoid.ConsoleController", "Prevoid.ConsoleController\Prevoid.ConsoleController.csproj", "{90F22392-844F-4CEB-AC9A-ACF0DE259563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prevoid.ConsoleController", "Prevoid.ConsoleController\Prevoid.ConsoleController.csproj", "{90F22392-844F-4CEB-AC9A-ACF0DE259563}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prevoid.Model", "Prevoid.Model\Prevoid.Model.csproj", "{E0BF8724-DDF8-4DD6-A0C9-73A3EA681FB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prevoid.Model", "Prevoid.Model\Prevoid.Model.csproj", "{E0BF8724-DDF8-4DD6-A0C9-73A3EA681FB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prevoid.View", "Prevoid.View\Prevoid.View.csproj", "{1756F804-1690-48CA-9C2E-B9CEAF2D58F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prevoid.View", "Prevoid.View\Prevoid.View.csproj", "{1756F804-1690-48CA-9C2E-B9CEAF2D58F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prevoid.ViewModel", "Prevoid.ViewModel\Prevoid.ViewModel.csproj", "{9CF13716-8963-4B27-B2BA-CC2D3F1589F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prevoid.ViewModel", "Prevoid.ViewModel\Prevoid.ViewModel.csproj", "{9CF13716-8963-4B27-B2BA-CC2D3F1589F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prevoid.Network", "Prevoid.Network\Prevoid.Network.csproj", "{99764007-56C7-4955-86AC-4385410B310C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9CF13716-8963-4B27-B2BA-CC2D3F1589F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CF13716-8963-4B27-B2BA-CC2D3F1589F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CF13716-8963-4B27-B2BA-CC2D3F1589F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99764007-56C7-4955-86AC-4385410B310C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99764007-56C7-4955-86AC-4385410B310C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99764007-56C7-4955-86AC-4385410B310C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99764007-56C7-4955-86AC-4385410B310C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

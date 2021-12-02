@@ -4,6 +4,7 @@ using Prevoid.Model.EventArgs;
 using Prevoid.View.Forms;
 using Prevoid.View.Renderers;
 using Prevoid.ViewModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Prevoid.View
@@ -56,7 +57,7 @@ namespace Prevoid.View
             await Task.Run(_ScreenDrawer.DrawLoop);
         }
 
-        private void RenderTurnEnd()
+        private void RenderTurnEnd(IEnumerable<Command> commands)
         {
             GM.FieldOfView.Clear();
             _MapRenderer.RenderMap();

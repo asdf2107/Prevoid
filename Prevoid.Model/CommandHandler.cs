@@ -1,5 +1,6 @@
 ﻿using Prevoid.Model.Commands;
 using System;
+using System.Collections.Generic;
 
 namespace Prevoid.Model
 {
@@ -8,6 +9,13 @@ namespace Prevoid.Model
         public event Action<MoveCommand> NeedMoveCommandRender;
         public event Action<AttackCommand> NeedAttackCommandRender;
         public event Action<SetUnitCommand> NeedSetUnitCommandRender;
+
+        public List<Command> TurnCommands { get; private set; } = new();
+
+        public CommandHandler()
+        {
+            GM.TurnChanged += () => TurnCommands.Clear();
+        }
 
         public void HandleCommand(Command command)
         {
@@ -30,6 +38,8 @@ namespace Prevoid.Model
             {
                 throw new NotImplementedException();
             }
+
+            TurnCommands.Add(command);
         }
 
         private void MoveUnit(MoveCommand command)

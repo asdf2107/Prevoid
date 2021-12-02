@@ -8,7 +8,7 @@ namespace Prevoid.Model
 {
     public static class GM
     {
-        public static event Action TurnEnded;
+        public static event Action<IEnumerable<Command>> TurnEnded;
         public static event Action TurnChanged;
         public static event Action<Unit> SelectedUnitChanged;
 
@@ -94,7 +94,7 @@ namespace Prevoid.Model
 
             SelectedUnit = null;
             HasTurnEnded = true;
-            TurnEnded?.Invoke();
+            TurnEnded?.Invoke(CommandHandler.TurnCommands);
         }
 
         /// <summary>
