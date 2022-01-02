@@ -81,17 +81,8 @@ namespace Prevoid.Model
 
         public static void NextTurn()
         {
-            if (CurrentPlayer == Player1)
-            {
-                CurrentPlayer = Player2;
-                GameState = GameState == GameState.Movement ? GameState.Movement : GameState.Attack;
-            }
-            else
-            {
-                CurrentPlayer = Player1;
-                GameState = GameState == GameState.Attack ? GameState.Movement : GameState.Attack;
-            }
-
+            CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
+            GameState = GameState == GameState.Attack && CurrentPlayer == Player1 ? GameState.Movement : GameState.Attack;
             SelectedUnit = null;
             HasTurnEnded = true;
             TurnEnded?.Invoke();
