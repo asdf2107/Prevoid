@@ -4,22 +4,18 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-namespace Prevoid.Network
+namespace Prevoid.Network.Connections
 {
     public class Connection
     {
-        public Socket Remote { get; private set; }
+        protected Socket Remote { get; set; }
         private static readonly Encoding _Encoding = Encoding.UTF8;
-        private const int _Port = 11000;
         private const int _MessageMaxSize = 2048;
 
         /// <summary>
         /// Create connection as a server.
         /// </summary>
-        public Connection()
-        {
-            throw new NotImplementedException();    
-        }
+        protected Connection() { }
 
         /// <summary>
         /// Create connection as a client.
@@ -27,8 +23,8 @@ namespace Prevoid.Network
         /// <param name="ip">Server's IP</param>
         public Connection(string ip)
         {
-            Remote = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            Remote.Connect(ip, _Port);
+            Remote = new Socket(Constants.AddressFamily, Constants.SocketType, Constants.ProtocolType);
+            Remote.Connect(ip, Constants.Port);
         }
 
         public async Task SendText(string text)

@@ -1,4 +1,5 @@
 ﻿using Prevoid.Model;
+using Prevoid.Network.Connections;
 
 namespace Prevoid.Network
 {
@@ -10,7 +11,7 @@ namespace Prevoid.Network
         public NetworkManager(Player currentMachinePlayer, string remoteIP = null)
         {
             CurrentMachinePlayer = currentMachinePlayer;
-            _Connection = remoteIP is null ? new Connection() : new Connection(remoteIP);
+            _Connection = remoteIP is null ? new ServerConnection() : new Connection(remoteIP);
             GM.TurnEnded += SendCommandsIfNeeded;
 
             Task.Run(() => RecieveCommands());
