@@ -20,10 +20,5 @@ namespace Prevoid.Network.Connections
             _Listener.Listen();
             Remote = _Listener.Accept();
         }
-
-        public IPAddress GetLocalIP()
-        {
-            return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-        }
     }
 }

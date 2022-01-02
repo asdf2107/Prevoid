@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -37,6 +38,11 @@ namespace Prevoid.Network.Connections
             byte[] buffer = new byte[_MessageMaxSize];
             Remote.Receive(buffer);
             return _Encoding.GetString(buffer);
+        }
+
+        public static IPAddress GetLocalIP()
+        {
+            return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
         }
     }
 }
