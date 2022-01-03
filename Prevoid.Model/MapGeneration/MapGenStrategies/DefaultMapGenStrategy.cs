@@ -32,7 +32,7 @@ namespace Prevoid.Model.MapGeneration.MapGenStrategies
             }
         }
 
-        private TerrainType GetTerrainType(float val)
+        private static TerrainType GetTerrainType(float val)
         {
             return val switch
             {
