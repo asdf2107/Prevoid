@@ -89,7 +89,11 @@ namespace Prevoid.View.Forms
             }
             else
             {
+                var blank = Symbol.FromText("  -");
                 InnerText[5][1] = GetTextValue("[none]");
+                InnerText[6][1] = blank;
+                InnerText[7][1] = blank;
+                InnerText[8][1] = blank;
             }
         }
 
