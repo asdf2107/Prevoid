@@ -42,6 +42,16 @@ namespace Prevoid.Model
             return Fields[Selection.Item1, Selection.Item2];
         }
 
+        public Unit GetUnitById(int id)
+        {
+            foreach (var unit in Fields)
+            {
+                if (unit?.Id == id) return unit;
+            }
+
+            throw new InvalidOperationException($"Unit with id '{id}' not found");
+        }
+
         /// <summary>
         /// Get coords corresponding to a circle of given radius with the center in (x, y)
         /// </summary>

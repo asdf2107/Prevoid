@@ -15,8 +15,9 @@ namespace Prevoid.Network.Connections
         /// </summary>
         public ServerConnection() : base()
         {
-            _Listener = new Socket(Constants.AddressFamily, Constants.SocketType, Constants.ProtocolType);
-            _Listener.Bind(new IPEndPoint(GetLocalIP(), Constants.Port));
+            var localIP = GetLocalIP();
+            _Listener = new Socket(localIP.AddressFamily, Constants.SocketType, Constants.ProtocolType);
+            _Listener.Bind(new IPEndPoint(localIP, Constants.Port));
             _Listener.Listen();
             Remote = _Listener.Accept();
         }

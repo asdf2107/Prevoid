@@ -1,5 +1,4 @@
-﻿using Prevoid.Model.MapGeneration.MapGenStrategies;
-using Prevoid.ViewModel;
+﻿using Prevoid.Model.EventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,8 @@ namespace Prevoid.Model
 {
     public static class GM
     {
-        public static event Action<IEnumerable<Command>> TurnEnded;
+        public static event Action GameStarted;
+        public static event Action<TurnEndedEventArgs> TurnEnded;
         public static event Action TurnChanged;
         public static event Action<Unit> SelectedUnitChanged;
 
@@ -20,6 +20,8 @@ namespace Prevoid.Model
         public static Player CurrentPlayer { get; private set; }
         public static List<(int, int)> FieldOfView { get; set; }
         public static GameState GameState { get; private set; }
+        public static GameMode GameMode { get; set; }
+        public static Player LocalPlayer { get; set; }
         public static bool HasTurnEnded { get; private set; }
         private static Unit _SelectedUnit;
         /// <summary>
@@ -45,16 +47,26 @@ namespace Prevoid.Model
         static GM()
         {
             Map = new Map(Constants.MapWidth, Constants.MapHeight);
-            new DefaultMapGenStrategy().GenMap(Map, Random.Next());
             Player1 = new Player(1, ConsoleColor.Blue);
             Player2 = new Player(2, ConsoleColor.Red);
-            CurrentPlayer = Player1;
+            SetCurrentPlayer(Player1);
         }
 
         public static void Start()
         {
             GameState = GameState.Movement;
-            TurnChanged?.Invoke();
+            GameStarted?.Invoke();
+        }
+
+        public static void SetCurrentPlayer(Player player)
+        {
+            CurrentPlayer = player;
+
+            if (GameMode == GameMode.PvPOnline && player == Player2)
+            {
+                GameState = GameState.Attack;
+                NextTurn(false, false);
+            }
         }
 
         /// <summary>
@@ -79,7 +91,7 @@ namespace Prevoid.Model
             return FieldOfView.Contains(coords);
         }
 
-        public static void NextTurn()
+        public static void NextTurn(bool skipTurnEndedWait = false, bool sendCommands = true)
         {
             if (CurrentPlayer == Player1)
             {
@@ -94,51 +106,60 @@ namespace Prevoid.Model
 
             SelectedUnit = null;
             HasTurnEnded = true;
-            TurnEnded?.Invoke(CommandHandler.TurnCommands);
+            TurnEnded?.Invoke(new TurnEndedEventArgs(CommandHandler.TurnCommands, sendCommands));
+
+            if (skipTurnEndedWait)
+            {
+                HandleInput(ConsoleKey.Enter, true);
+            }
         }
 
         /// <summary>
         /// Handles user input. If returns false, the program should end execution.
         /// </summary>
         /// <param name="keyInfo">User input</param>
+        /// <param name="onlineRecieved">Indicates whether the other player has ended his turn in online mode</param>
         /// <returns></returns>
-        public static bool HandleInput(ConsoleKeyInfo keyInfo)
+        public static bool HandleInput(ConsoleKey key, bool onlineRecieved = false)
         {
-            if (HasTurnEnded)
+            if (!(HasTurnEnded && GM.GameMode == GameMode.PvPOnline && !onlineRecieved))
             {
-                HasTurnEnded = false;
-                TurnChanged?.Invoke();
-                return true;
-            }
+                if (HasTurnEnded)
+                {
+                    HasTurnEnded = false;
+                    TurnChanged?.Invoke();
+                    return true;
+                }
 
-            switch (keyInfo.Key)
-            {
-                case ConsoleKey.W:
-                case ConsoleKey.UpArrow:
-                    Map.TryMoveSelection(Direction.North);
-                    break;
-                case ConsoleKey.S:
-                case ConsoleKey.DownArrow:
-                    Map.TryMoveSelection(Direction.South);
-                    break;
-                case ConsoleKey.A:
-                case ConsoleKey.LeftArrow:
-                    Map.TryMoveSelection(Direction.West);
-                    break;
-                case ConsoleKey.D:
-                case ConsoleKey.RightArrow:
-                    Map.TryMoveSelection(Direction.East);
-                    break;
-                case ConsoleKey.Enter:
-                case ConsoleKey.Spacebar:
-                    EnterPressed();
-                    break;
-                case ConsoleKey.Tab:
-                    TabPressed();
-                    break;
-                case ConsoleKey.Escape:
-                    EscapePressed();
-                    break;
+                switch (key)
+                {
+                    case ConsoleKey.W:
+                    case ConsoleKey.UpArrow:
+                        Map.TryMoveSelection(Direction.North);
+                        break;
+                    case ConsoleKey.S:
+                    case ConsoleKey.DownArrow:
+                        Map.TryMoveSelection(Direction.South);
+                        break;
+                    case ConsoleKey.A:
+                    case ConsoleKey.LeftArrow:
+                        Map.TryMoveSelection(Direction.West);
+                        break;
+                    case ConsoleKey.D:
+                    case ConsoleKey.RightArrow:
+                        Map.TryMoveSelection(Direction.East);
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        EnterPressed();
+                        break;
+                    case ConsoleKey.Tab:
+                        TabPressed();
+                        break;
+                    case ConsoleKey.Escape:
+                        EscapePressed();
+                        break;
+                }
             }
 
             return true;

@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 	<LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Prevoid.Model\Prevoid.Model.csproj" />
+    <ProjectReference Include="..\Prevoid.Network\Prevoid.Network.csproj" />
     <ProjectReference Include="..\Prevoid.View\Prevoid.View.csproj" />
   </ItemGroup>
 

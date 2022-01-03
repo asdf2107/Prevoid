@@ -38,13 +38,16 @@ namespace Prevoid.View
             _SelectedUnitInfoForm = new SelectedUnitInfoForm(83, 0, 20, 22);
 
             GM.TurnEnded += RenderTurnEnd;
+            GM.GameStarted += RenderTurnChange;
             GM.TurnChanged += RenderTurnChange;
             GM.Map.SelectionMoved += RenderSelectionMove;
             GM.SelectedUnitChanged += RenderSelectedUnitChange;
 
+
             GM.CommandHandler.NeedMoveCommandRender += RenderMoveCommand;
             GM.CommandHandler.NeedAttackCommandRender += RenderAttackCommand;
             GM.CommandHandler.NeedSetUnitCommandRender += RenderSetUnitCommand;
+            GM.CommandHandler.NeedFullMapRender += RenderFullMap;
 
             _MoveAreaOverlay.ShownChanged += RenderOverlay;
             _MoveAreaOverlay.Hidden += HideOverlay;
@@ -57,7 +60,7 @@ namespace Prevoid.View
             await Task.Run(_ScreenDrawer.DrawLoop);
         }
 
-        private void RenderTurnEnd(IEnumerable<Command> commands)
+        private void RenderTurnEnd(TurnEndedEventArgs e)
         {
             GM.FieldOfView.Clear();
             _MapRenderer.RenderMap();
@@ -68,13 +71,18 @@ namespace Prevoid.View
 
         private void RenderTurnChange()
         {
+            RenderFullMap();
+            _FormRenderer.Render(_HelpForm);
+            _FormRenderer.Render(_PointedUnitInfoForm);
+            _FormRenderer.Render(_SelectedUnitInfoForm);
+        }
+
+        private void RenderFullMap()
+        {
             _MapRenderer.RecacheAndRedrawFieldOfView();
             _MapRenderer.RenderMap();
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
             _OverlayHelper.UpdateAttackAreaOverlay(_AttackAreaOverlay);
-            _FormRenderer.Render(_HelpForm);
-            _FormRenderer.Render(_PointedUnitInfoForm);
-            _FormRenderer.Render(_SelectedUnitInfoForm);
         }
 
         private void RenderSelectionMove(SelectionMovedEventArgs eventArgs)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Prevoid.Network.Connections
 {
@@ -24,8 +25,9 @@ namespace Prevoid.Network.Connections
         /// <param name="ip">Server's IP</param>
         public Connection(string ip)
         {
-            Remote = new Socket(Constants.AddressFamily, Constants.SocketType, Constants.ProtocolType);
-            Remote.Connect(ip, Constants.Port);
+            var remoteIP = IPAddress.Parse(ip);
+            Remote = new Socket(remoteIP.AddressFamily, Constants.SocketType, Constants.ProtocolType);
+            Remote.Connect(remoteIP, Constants.Port);
         }
 
         public async Task SendText(string text)
@@ -42,7 +44,15 @@ namespace Prevoid.Network.Connections
 
         public static IPAddress GetLocalIP()
         {
-            return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+            foreach (var ip in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip;
+                }
+            }
+
+            throw new Exception("No network adapters with an IPv4 address in the system");
         }
     }
 }

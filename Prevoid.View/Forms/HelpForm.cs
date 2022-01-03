@@ -74,7 +74,13 @@ namespace Prevoid.View.Forms
         private readonly List<List<Symbol>> TurnEndedHelpText = new ()
         {
             new () { Symbol.FromText("[player]"), Symbol.FromText("'s turn.") },
-            new () { Symbol.FromText("Press any key to continue...", Constants.HighlightTextColor) }
+            new () { Symbol.FromText("Press any key to continue...", Constants.HighlightTextColor) },
+        };
+
+        private readonly List<List<Symbol>> TurnEndedOnlineHelpText = new()
+        {
+            new() { Symbol.FromText("[player]"), Symbol.FromText("'s turn.") },
+            new() { Symbol.FromText("Please wait for the player to finish his turn...", Constants.HighlightTextColor) },
         };
 
         public HelpForm(int x, int y, int width, int height) : base(x, y, width, height, Constants.ThinBoxCharSet) { }
@@ -83,7 +89,7 @@ namespace Prevoid.View.Forms
         {
             if (GM.HasTurnEnded)
             {
-                InnerText = TurnEndedHelpText;
+                InnerText = GM.GameMode == GameMode.PvPOnline ? TurnEndedOnlineHelpText : TurnEndedHelpText;
             }
             else
             {

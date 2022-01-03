@@ -1,27 +1,55 @@
 ﻿using Prevoid.Model;
+using Prevoid.Model.Commands;
+using Prevoid.Model.EventArgs;
 using Prevoid.Network.Connections;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Prevoid.Network
 {
     public class NetworkManager
     {
-        public readonly Player CurrentMachinePlayer;
+        public readonly Player LocalPlayer;
         private readonly Connection _Connection;
+        private readonly Task _RecieveCommandsTask;
 
-        public NetworkManager(Player currentMachinePlayer, string remoteIP = null)
+        public NetworkManager(Player localPlayer, string remoteIP = null)
         {
-            CurrentMachinePlayer = currentMachinePlayer;
-            _Connection = remoteIP is null ? new ServerConnection() : new Connection(remoteIP);
+            LocalPlayer = localPlayer;
+            _Connection = string.IsNullOrEmpty(remoteIP) ? new ServerConnection() : new Connection(remoteIP);
             GM.TurnEnded += SendCommandsIfNeeded;
 
-            Task.Run(() => RecieveCommands());
+            _RecieveCommandsTask = Task.Run(() => RecieveCommands());
         }
 
-        private async void SendCommandsIfNeeded(IEnumerable<Command> commands)
+        public static void StartOnline()
         {
-            if (GM.CurrentPlayer != CurrentMachinePlayer)
+            Console.WriteLine("Your IP is listed below; Press Enter\nto create a game as a host,\nor enter host's IP to join.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(Connection.GetLocalIP());
+            string input = Console.ReadLine();
+
+            var localPlayer = string.IsNullOrEmpty(input) ? GM.Player1 : GM.Player2;
+            GM.GameMode = GameMode.PvPOnline;
+            GM.LocalPlayer = localPlayer;
+            GM.SetCurrentPlayer(localPlayer);
+
+            _ = new NetworkManager(localPlayer, input);
+
+            if (localPlayer == GM.Player1) // server
             {
-                await SendCommands(commands);
+                GM.CommandHandler.HandleCommand(new GenMapCommand(GM.Random.Next()));
+            }
+        }
+
+        private async void SendCommandsIfNeeded(TurnEndedEventArgs e)
+        {
+            if (_RecieveCommandsTask.Exception != null) throw _RecieveCommandsTask.Exception;
+
+            if (GM.CurrentPlayer != LocalPlayer && e.SendToOtherOnlinePlayer)
+            {
+                await SendCommands(e.Commands);
             }
         }
 
@@ -40,7 +68,12 @@ namespace Prevoid.Network
 
         private void HandleIncomingCommands(IEnumerable<Command> commands)
         {
-            throw new NotImplementedException();
+            foreach (var command in commands)
+            {
+                GM.CommandHandler.HandleCommand(command);
+            }
+
+            GM.NextTurn(true);
         }
     }
 }
