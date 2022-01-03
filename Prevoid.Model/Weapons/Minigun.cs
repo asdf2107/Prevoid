@@ -8,6 +8,6 @@ namespace Prevoid.Model.Weapons
     {
         public override string Name => "Minigun";
 
-        public Minigun() : base(4, 0.4f, 3, DamageType.Point) { }
+        public Minigun() : base(4, 0.2f, 3, DamageType.Point) { }
     }
 }

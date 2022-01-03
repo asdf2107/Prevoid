@@ -6,6 +6,6 @@ namespace Prevoid.Model.Units
     {
         public Base(Player player)
             : base(player, "BASE",
-                0, 15, ViewModel.SpriteType.Base, 4, new Minigun()) { }
+                0, 10, ViewModel.SpriteType.Base, 4, new Minigun()) { }
     }
 }
