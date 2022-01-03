@@ -42,6 +42,16 @@ namespace Prevoid.Model
             return Fields[Selection.Item1, Selection.Item2];
         }
 
+        public Unit GetUnitById(int id)
+        {
+            foreach (var unit in Fields)
+            {
+                if (unit?.Id == id) return unit;
+            }
+
+            throw new InvalidOperationException($"Unit with id '{id}' not found");
+        }
+
         /// <summary>
         /// Get coords corresponding to a circle of given radius with the center in (x, y)
         /// </summary>
@@ -145,7 +155,52 @@ namespace Prevoid.Model
                 Add(x + 2, y - 3);
             }
 
-            if (range >= 5) throw new NotImplementedException();
+            if (range >= 5)
+            {
+                dist = 5;
+
+                Add(x + 5, y);
+                Add(x - 5, y);
+                Add(x, y + 5);
+                Add(x, y - 5);
+
+                Add(x + 5, y - 1);
+                Add(x - 5, y - 1);
+                Add(x - 1, y + 5);
+                Add(x - 1, y - 5);
+
+                Add(x + 5, y + 1);
+                Add(x - 5, y + 1);
+                Add(x + 1, y + 5);
+                Add(x + 1, y - 5);
+
+                Add(x + 4, y - 2);
+                Add(x - 4, y - 2);
+                Add(x - 2, y + 4);
+                Add(x - 2, y - 4);
+
+                Add(x + 4, y + 2);
+                Add(x - 4, y + 2);
+                Add(x + 2, y + 4);
+                Add(x + 2, y - 4);
+
+                Add(x + 3, y + 3);
+                Add(x + 3, y - 3);
+                Add(x - 3, y + 3);
+                Add(x - 3, y - 3);
+
+                Add(x + 3, y + 4);
+                Add(x + 3, y - 4);
+                Add(x - 3, y + 4);
+                Add(x - 3, y - 4);
+
+                Add(x + 4, y + 3);
+                Add(x + 4, y - 3);
+                Add(x - 4, y + 3);
+                Add(x - 4, y - 3);
+            }
+
+            if (range >= 6) throw new NotImplementedException();
 
             return result;
 

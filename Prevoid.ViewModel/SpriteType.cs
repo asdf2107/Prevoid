@@ -12,5 +12,6 @@
         Base,
         Soldiers,
         Tank,
+        ScoutCar,
     }
 }

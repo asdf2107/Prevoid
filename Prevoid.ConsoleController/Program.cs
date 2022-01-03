@@ -1,8 +1,10 @@
 ﻿using Prevoid.Model;
 using Prevoid.Model.Units;
+using Prevoid.Network;
 using Prevoid.View;
 using System;
 using System.Globalization;
+using Constants = Prevoid.Model.Constants;
 
 namespace Prevoid.ConsoleController;
 
@@ -25,23 +27,31 @@ class Program
         catch (PlatformNotSupportedException) { }
 #pragma warning restore CA1416
 
-        RenderHandler rh = new();
-        _ = rh.StartRenderingAsync();
+        NetworkManager.StartOnline();
+        //GM.CommandHandler.HandleCommand(new GenMapCommand(GM.Random.Next()));
 
-        GM.Map.SetUnit(new Base(GM.Player1), 20, 20);
-        GM.Map.SetUnit(new Base(GM.Player2), 10, 10);
+        _ = new RenderHandler().StartRenderingAsync();
 
-        GM.Map.SetUnit(new Tank(GM.Player1), 16, 19);
-        GM.Map.SetUnit(new Tank(GM.Player1), 16, 17);
-        GM.Map.SetUnit(new Tank(GM.Player2), 12, 13);
-        GM.Map.SetUnit(new Tank(GM.Player2), 14, 13);
+        GM.Map.SetUnit(new Base(GM.Player1), Constants.MapWidth - 2, Constants.MapHeight - 2);
+        GM.Map.SetUnit(new Base(GM.Player2), 1, 1);
+
+        GM.Map.SetUnit(new ScoutCar(GM.Player1), Constants.MapWidth - 6, Constants.MapHeight - 2);
+        GM.Map.SetUnit(new Tank(GM.Player1), Constants.MapWidth - 11, Constants.MapHeight - 2);
+        GM.Map.SetUnit(new Tank(GM.Player1), Constants.MapWidth - 16, Constants.MapHeight - 2);
+        GM.Map.SetUnit(new Tank(GM.Player1), Constants.MapWidth - 21, Constants.MapHeight - 2);
+        GM.Map.SetUnit(new ScoutCar(GM.Player1), Constants.MapWidth - 26, Constants.MapHeight - 2);
+        GM.Map.SetUnit(new ScoutCar(GM.Player2), 5, 1);
+        GM.Map.SetUnit(new Tank(GM.Player2), 10, 1);
+        GM.Map.SetUnit(new Tank(GM.Player2), 15, 1);
+        GM.Map.SetUnit(new Tank(GM.Player2), 20, 1);
+        GM.Map.SetUnit(new ScoutCar(GM.Player2), 25, 1);
 
         GM.Start();
 
-        bool goOn = true;
-        while (goOn)
+        bool continueGameLoop = true;
+        while (continueGameLoop)
         {
-            goOn = GM.HandleInput(Console.ReadKey(true));
+            continueGameLoop = GM.HandleInput(Console.ReadKey(true).Key);
         }
     }
 }

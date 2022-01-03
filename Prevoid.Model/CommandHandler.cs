@@ -1,5 +1,7 @@
 ﻿using Prevoid.Model.Commands;
+using Prevoid.Model.MapGeneration.MapGenStrategies;
 using System;
+using System.Collections.Generic;
 
 namespace Prevoid.Model
 {
@@ -8,6 +10,14 @@ namespace Prevoid.Model
         public event Action<MoveCommand> NeedMoveCommandRender;
         public event Action<AttackCommand> NeedAttackCommandRender;
         public event Action<SetUnitCommand> NeedSetUnitCommandRender;
+        public event Action NeedFullMapRender;
+
+        public List<Command> TurnCommands { get; private set; } = new();
+
+        public CommandHandler()
+        {
+            GM.TurnChanged += () => TurnCommands.Clear();
+        }
 
         public void HandleCommand(Command command)
         {
@@ -21,6 +31,11 @@ namespace Prevoid.Model
                 AttackUnit(attackCommand);
                 if (command.NeedRender) NeedAttackCommandRender?.Invoke(attackCommand);
             }
+            else if (command is GenMapCommand genMapCommand)
+            {
+                GenMap(genMapCommand);
+                if (command.NeedRender) NeedFullMapRender?.Invoke();
+            }
             else if (command is SetUnitCommand setUnitCommand)
             {
                 SetUnit(setUnitCommand);
@@ -30,6 +45,8 @@ namespace Prevoid.Model
             {
                 throw new NotImplementedException();
             }
+
+            TurnCommands.Add(command);
         }
 
         private void MoveUnit(MoveCommand command)
@@ -48,10 +65,14 @@ namespace Prevoid.Model
             else throw new NotImplementedException();
         }
 
+        private void GenMap(GenMapCommand command)
+        {
+            new DefaultMapGenStrategy().GenMap(GM.Map, command.Seed);
+        }
+
         private void SetUnit(SetUnitCommand command)
         {
             GM.Map.SetUnit(command.Unit, command.AtX, command.AtY);
         }
-
     }
 }

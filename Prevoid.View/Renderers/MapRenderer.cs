@@ -71,7 +71,7 @@ namespace Prevoid.View.Renderers
             RenderFields(GM.RecacheFieldOfView());
         }
 
-        private ConsoleColor GetOverlayColor(OverlayType overlayType)
+        private static ConsoleColor GetOverlayColor(OverlayType overlayType)
         {
             return overlayType switch
             {
@@ -190,6 +190,12 @@ namespace Prevoid.View.Renderers
                     ForeColor = harmable.Player.Color,
                     BackColor = Constants.TerrainColor,
                     Text = "B" + harmable.HpChar,
+                },
+                SpriteType.ScoutCar => new Symbol
+                {
+                    ForeColor = harmable.Player.Color,
+                    BackColor = Constants.TerrainColor,
+                    Text = "S" + harmable.HpChar,
                 },
                 _ => throw new NotImplementedException(),
             };

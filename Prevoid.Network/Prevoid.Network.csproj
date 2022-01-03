@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-	<LangVersion>10</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Prevoid.Model\Prevoid.Model.csproj" />
-    <ProjectReference Include="..\Prevoid.ViewModel\Prevoid.ViewModel.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,16 +6,10 @@ namespace Prevoid.Model.MapGeneration
 {
     public static class Noise2d
     {
-        private static Random _Random = new Random();
+        private static Random _Random = new();
         private static int[] _Permutation;
 
         private static Vector2[] _Gradients;
-
-        static Noise2d()
-        {
-            CalculatePermutation(out _Permutation);
-            CalculateGradients(out _Gradients);
-        }
 
         private static void CalculatePermutation(out int[] p)
         {
@@ -34,6 +28,7 @@ namespace Prevoid.Model.MapGeneration
         public static void Reseed()
         {
             CalculatePermutation(out _Permutation);
+            CalculateGradients(out _Gradients);
         }
 
         public static void Reseed(int seed)
