@@ -93,7 +93,9 @@ namespace Prevoid.Model
         public static void NextTurn(bool skipTurnEndedWait = false, bool sendCommands = true)
         {
             CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
-            GameState = GameState == GameState.Attack && CurrentPlayer == Player1 ? GameState.Movement : GameState.Attack;
+            GameState = (GameState == GameState.Attack && CurrentPlayer == Player1)
+                || (GameState == GameState.Movement && CurrentPlayer == Player2)
+                ? GameState.Movement : GameState.Attack;
             SelectedUnit = null;
             HasTurnEnded = true;
             TurnEnded?.Invoke(new TurnEndedEventArgs(CommandManager.TurnCommands, sendCommands));
