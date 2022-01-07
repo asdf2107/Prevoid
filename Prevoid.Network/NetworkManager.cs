@@ -39,7 +39,7 @@ namespace Prevoid.Network
 
             if (localPlayer == GM.Player1) // server
             {
-                GM.CommandHandler.HandleCommand(new GenMapCommand(GM.Random.Next()));
+                CommandManager.HandleCommand(new GenMapCommand(GM.Random.Next()));
             }
         }
 
@@ -70,7 +70,7 @@ namespace Prevoid.Network
         {
             foreach (var command in commands)
             {
-                GM.CommandHandler.HandleCommand(command);
+                CommandManager.HandleCommand(command);
             }
 
             GM.NextTurn(true);

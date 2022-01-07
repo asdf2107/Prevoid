@@ -28,7 +28,7 @@ class Program
 #pragma warning restore CA1416
 
         NetworkManager.StartOnline();
-        //GM.CommandHandler.HandleCommand(new GenMapCommand(GM.Random.Next()));
+        //GM.CommandHandler.HandleCommand(new Model.Commands.GenMapCommand(GM.Random.Next()));
 
         _ = new RenderHandler().StartRenderingAsync();
 

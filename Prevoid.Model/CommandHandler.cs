@@ -1,78 +1,19 @@
-﻿using Prevoid.Model.Commands;
-using Prevoid.Model.MapGeneration.MapGenStrategies;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Prevoid.Model
 {
-    public class CommandHandler
+    public abstract class CommandHandler
     {
-        public event Action<MoveCommand> NeedMoveCommandRender;
-        public event Action<AttackCommand> NeedAttackCommandRender;
-        public event Action<SetUnitCommand> NeedSetUnitCommandRender;
-        public event Action NeedFullMapRender;
+        public Type CommandType { get; private set; }
 
-        public List<Command> TurnCommands { get; private set; } = new();
-
-        public CommandHandler()
+        public CommandHandler(Type commandType)
         {
-            GM.TurnChanged += () => TurnCommands.Clear();
+            if (!typeof(Command).IsAssignableFrom(commandType))
+                throw new ArgumentException($"Type {commandType.FullName} can not be used here");
+            
+            CommandType = commandType;
         }
 
-        public void HandleCommand(Command command)
-        {
-            if (command is MoveCommand moveCommand)
-            {
-                MoveUnit(moveCommand);
-                if (command.NeedRender) NeedMoveCommandRender?.Invoke(moveCommand);
-            }
-            else if (command is AttackCommand attackCommand)
-            {
-                AttackUnit(attackCommand);
-                if (command.NeedRender) NeedAttackCommandRender?.Invoke(attackCommand);
-            }
-            else if (command is GenMapCommand genMapCommand)
-            {
-                GenMap(genMapCommand);
-                if (command.NeedRender) NeedFullMapRender?.Invoke();
-            }
-            else if (command is SetUnitCommand setUnitCommand)
-            {
-                SetUnit(setUnitCommand);
-                if (command.NeedRender) NeedSetUnitCommandRender?.Invoke(setUnitCommand);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-
-            TurnCommands.Add(command);
-        }
-
-        private void MoveUnit(MoveCommand command)
-        {
-            GM.Map.Fields[command.Unit.X, command.Unit.Y] = null;
-            command.Unit.SetCoords(command.ToX, command.ToY);
-            GM.Map.Fields[command.ToX, command.ToY] = command.Unit;
-        }
-
-        private void AttackUnit(AttackCommand command)
-        {
-            if (command.DamageType == DamageType.Point)
-            {
-                GM.Map.Fields[command.AtX, command.AtY]?.Harm(command.Damage);
-            }
-            else throw new NotImplementedException();
-        }
-
-        private void GenMap(GenMapCommand command)
-        {
-            new DefaultMapGenStrategy().GenMap(GM.Map, command.Seed);
-        }
-
-        private void SetUnit(SetUnitCommand command)
-        {
-            GM.Map.SetUnit(command.Unit, command.AtX, command.AtY);
-        }
+        public abstract void Handle(Command command);
     }
 }

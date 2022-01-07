@@ -14,6 +14,9 @@ namespace Prevoid.Network
 
         public CommandSerializer(Type commandType, char prefix)
         {
+            if (!typeof(Command).IsAssignableFrom(commandType))
+                throw new ArgumentException($"Type {commandType.FullName} can not be used here");
+            
             CommandType = commandType;
             Prefix = prefix;
         }

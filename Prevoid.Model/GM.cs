@@ -13,7 +13,6 @@ namespace Prevoid.Model
         public static event Action<Unit> SelectedUnitChanged;
 
         public static readonly Random Random = new();
-        public static readonly CommandHandler CommandHandler = new();
         public static Map Map { get; private set; }
         public static Player Player1 { get; private set; }
         public static Player Player2 { get; private set; }
@@ -97,7 +96,7 @@ namespace Prevoid.Model
             GameState = GameState == GameState.Attack && CurrentPlayer == Player1 ? GameState.Movement : GameState.Attack;
             SelectedUnit = null;
             HasTurnEnded = true;
-            TurnEnded?.Invoke(new TurnEndedEventArgs(CommandHandler.TurnCommands, sendCommands));
+            TurnEnded?.Invoke(new TurnEndedEventArgs(CommandManager.TurnCommands, sendCommands));
 
             if (skipTurnEndedWait)
             {

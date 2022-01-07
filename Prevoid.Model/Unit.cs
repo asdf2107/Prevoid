@@ -67,7 +67,7 @@ namespace Prevoid.Model
 
         private void Move(int toX, int toY)
         {
-            GM.CommandHandler.HandleCommand(new MoveCommand(this, toX, toY));
+            CommandManager.HandleCommand(new MoveCommand(this, toX, toY));
             HasMoved = true;
         }
 
@@ -100,7 +100,7 @@ namespace Prevoid.Model
 
         private void Set(int toX, int toY)
         {
-            GM.CommandHandler.HandleCommand(new SetUnitCommand(this, toX, toY));
+            CommandManager.HandleCommand(new SetUnitCommand(this, toX, toY));
         }
 
         public virtual IEnumerable<(int, int)> GetSetArea()
@@ -149,7 +149,7 @@ namespace Prevoid.Model
         private void Attack(int atX, int atY)
         {
             Weapon.RemoveRound();
-            GM.CommandHandler.HandleCommand(new AttackCommand(this, atX, atY, CalculateDamage(), Weapon.DamageType));
+            CommandManager.HandleCommand(new AttackCommand(this, atX, atY, CalculateDamage(), Weapon.DamageType));
         }
 
         public void Harm(float damage)

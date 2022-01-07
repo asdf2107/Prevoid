@@ -1,4 +1,5 @@
 ﻿using Prevoid.Model;
+using Prevoid.Model.CommandHandlers;
 using Prevoid.Model.Commands;
 using Prevoid.Model.EventArgs;
 using Prevoid.View.Forms;
@@ -43,11 +44,10 @@ namespace Prevoid.View
             GM.Map.SelectionMoved += RenderSelectionMove;
             GM.SelectedUnitChanged += RenderSelectedUnitChange;
 
-
-            GM.CommandHandler.NeedMoveCommandRender += RenderMoveCommand;
-            GM.CommandHandler.NeedAttackCommandRender += RenderAttackCommand;
-            GM.CommandHandler.NeedSetUnitCommandRender += RenderSetUnitCommand;
-            GM.CommandHandler.NeedFullMapRender += RenderFullMap;
+            MoveCommandHandler.NeedMoveCommandRender += RenderMoveCommand;
+            AttackCommandHandler.NeedAttackCommandRender += RenderAttackCommand;
+            SetUnitCommandHandler.NeedSetUnitCommandRender += RenderSetUnitCommand;
+            GenMapCommandHandler.NeedGenMapCommandRender += RenderFullMap;
 
             _MoveAreaOverlay.ShownChanged += RenderOverlay;
             _MoveAreaOverlay.Hidden += HideOverlay;
