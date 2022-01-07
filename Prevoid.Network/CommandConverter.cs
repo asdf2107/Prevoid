@@ -3,17 +3,32 @@ using System.Text;
 using System.Collections.Generic;
 using Prevoid.Network.CommandSerializers;
 using System.Linq;
+using System;
 
 namespace Prevoid.Network
 {
     public static class CommandConverter
     {
-        private static readonly CommandSerializer[] _CommandSerializers = new CommandSerializer[]
+        private static readonly Dictionary<Type, CommandSerializer> _CommandSerializersByType = new();
+        private static readonly Dictionary<char, CommandSerializer> _CommandSerializersByPrefix = new();
+
+        static CommandConverter()
         {
-            new AttackCommandSerializer(),
-            new MoveCommandSerializer(),
-            new GenMapCommandSerializer(),
-        };
+            AddCommandSerializer(new AttackCommandSerializer());
+            AddCommandSerializer(new MoveCommandSerializer());
+            AddCommandSerializer(new GenMapCommandSerializer());
+        }
+
+        private static void AddCommandSerializer(CommandSerializer commandSerializer)
+        {
+            if (_CommandSerializersByType.ContainsKey(commandSerializer.CommandType))
+                throw new InvalidOperationException($"There already exists a serializer for key '{commandSerializer.CommandType.FullName}'");
+            if (_CommandSerializersByPrefix.ContainsKey(commandSerializer.Prefix))
+                throw new InvalidOperationException($"There already exists a serializer for key '{commandSerializer.Prefix}'");
+
+            _CommandSerializersByType.Add(commandSerializer.CommandType, commandSerializer);
+            _CommandSerializersByPrefix.Add(commandSerializer.Prefix, commandSerializer);
+        }
 
         public static string Serialize(IEnumerable<Command> commands)
         {
@@ -21,8 +36,7 @@ namespace Prevoid.Network
 
             foreach (var command in commands)
             {
-                _CommandSerializers.Single(cs => cs.CommandType == command.GetType())
-                    .Serialize(sb, command);
+                _CommandSerializersByType[command.GetType()].Serialize(sb, command);
             }
 
             return sb.ToString();
@@ -37,8 +51,7 @@ namespace Prevoid.Network
             {
                 if (!string.IsNullOrEmpty(commandString) && commandString[0] != '\0')
                 {
-                    commands.Add(_CommandSerializers.Single(cs => cs.Prefix == commandString[0])
-                        .Deserialize(commandString));
+                    commands.Add(_CommandSerializersByPrefix[commandString[0]].Deserialize(commandString));
                 }
             }
 
