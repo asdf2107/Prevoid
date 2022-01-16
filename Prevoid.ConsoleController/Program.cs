@@ -28,9 +28,9 @@ class Program
 #pragma warning restore CA1416
 
         NetworkManager.StartOnline();
-        //GM.CommandHandler.HandleCommand(new Model.Commands.GenMapCommand(GM.Random.Next()));
+        //CommandManager.HandleCommand(new Model.Commands.GenMapCommand(GM.Random.Next()));
 
-        _ = new RenderHandler().StartRenderingAsync();
+        _ = RenderHandler.StartRenderingAsync();
 
         GM.Map.SetUnit(new Base(GM.Player1), Constants.MapWidth - 2, Constants.MapHeight - 2);
         GM.Map.SetUnit(new Base(GM.Player2), 1, 1);

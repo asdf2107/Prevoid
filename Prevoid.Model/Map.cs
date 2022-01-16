@@ -235,6 +235,15 @@ namespace Prevoid.Model
             return TrySetSelection(Selection.Item1 + dx, Selection.Item2 + dy);
         }
 
+        public void ResetSelection()
+        {
+            int x = Width / 2;
+            int y = Height / 2;
+            var eventArgs = new SelectionMovedEventArgs(Selection.Item1, Selection.Item2, x, y);
+            Selection = (x, y);
+            SelectionMoved?.Invoke(eventArgs);
+        }
+
         private bool TrySetSelection(int x, int y)
         {
             if (InBounds(x, y))

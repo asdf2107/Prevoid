@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 
 namespace Prevoid.View
 {
-    public class RenderHandler
+    public static class RenderHandler
     {
-        private readonly ScreenDrawer _ScreenDrawer = new();
+        private static readonly ScreenDrawer _ScreenDrawer = new();
 
-        private readonly Overlay _MoveAreaOverlay;
-        private readonly Overlay _AttackAreaOverlay;
+        private static readonly Overlay _MoveAreaOverlay;
+        private static readonly Overlay _AttackAreaOverlay;
 
-        private readonly HelpForm _HelpForm;
-        private readonly UnitInfoForm _PointedUnitInfoForm;
-        private readonly UnitInfoForm _SelectedUnitInfoForm;
+        private static readonly HelpForm _HelpForm;
+        private static readonly UnitInfoForm _PointedUnitInfoForm;
+        private static readonly UnitInfoForm _SelectedUnitInfoForm;
 
-        private readonly OverlayHelper _OverlayHelper;
-        private readonly MapRenderer _MapRenderer;
-        private readonly FormRenderer _FormRenderer;
+        private static readonly OverlayHelper _OverlayHelper;
+        private static readonly MapRenderer _MapRenderer;
+        private static readonly FormRenderer _FormRenderer;
 
-        public RenderHandler()
+        static RenderHandler()
         {
             _OverlayHelper = new OverlayHelper(GM.Map);
             _MapRenderer = new MapRenderer(_ScreenDrawer, GM.Map);
@@ -55,12 +55,17 @@ namespace Prevoid.View
             _AttackAreaOverlay.Hidden += HideOverlay;
         }
 
-        public async Task StartRenderingAsync()
+        public static async Task StartRenderingAsync()
         {
             await Task.Run(_ScreenDrawer.DrawLoop);
         }
 
-        private void RenderTurnEnd(TurnEndedEventArgs e)
+        internal static void RenderForm(Form form)
+        {
+            _FormRenderer.Render(form);
+        }
+
+        private static void RenderTurnEnd(TurnEndedEventArgs e)
         {
             GM.FieldOfView.Clear();
             _MapRenderer.RenderMap();
@@ -69,7 +74,7 @@ namespace Prevoid.View
             _FormRenderer.Render(_SelectedUnitInfoForm);
         }
 
-        private void RenderTurnChange()
+        private static void RenderTurnChange()
         {
             RenderFullMap();
             _FormRenderer.Render(_HelpForm);
@@ -77,7 +82,7 @@ namespace Prevoid.View
             _FormRenderer.Render(_SelectedUnitInfoForm);
         }
 
-        private void RenderFullMap()
+        private static void RenderFullMap()
         {
             _MapRenderer.RecacheAndRedrawFieldOfView();
             _MapRenderer.RenderMap();
@@ -85,7 +90,7 @@ namespace Prevoid.View
             _OverlayHelper.UpdateAttackAreaOverlay(_AttackAreaOverlay);
         }
 
-        private void RenderSelectionMove(SelectionMovedEventArgs eventArgs)
+        private static void RenderSelectionMove(SelectionMovedEventArgs eventArgs)
         {
             _MapRenderer.RenderFields(new[] { (eventArgs.FromX, eventArgs.FromY), (eventArgs.ToX, eventArgs.ToY) });           
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
@@ -93,39 +98,39 @@ namespace Prevoid.View
             _FormRenderer.Render(_PointedUnitInfoForm); // TODO: Rerender only if PointedUnit changes
         }
 
-        private void RenderSelectedUnitChange(Unit unit)
+        private static void RenderSelectedUnitChange(Unit unit)
         {
             _OverlayHelper.UpdateMoveAreaOverlay(_MoveAreaOverlay);
             _OverlayHelper.UpdateAttackAreaOverlay(_AttackAreaOverlay);
             _FormRenderer.Render(_SelectedUnitInfoForm);
         }
 
-        private void RenderMoveCommand(MoveCommand command)
+        private static void RenderMoveCommand(MoveCommand command)
         {
             _MapRenderer.RecacheAndRedrawFieldOfView();
             _MapRenderer.RenderFields(new[] { (command.FromX, command.FromY), (command.ToX, command.ToY) });
             _FormRenderer.Render(_PointedUnitInfoForm);
         }
 
-        private void RenderAttackCommand(AttackCommand command)
+        private static void RenderAttackCommand(AttackCommand command)
         {
             _MapRenderer.RenderField(command.AtX, command.AtY);
             _FormRenderer.Render(_PointedUnitInfoForm);
             _FormRenderer.Render(_SelectedUnitInfoForm);
         }
 
-        private void RenderSetUnitCommand(SetUnitCommand command)
+        private static void RenderSetUnitCommand(SetUnitCommand command)
         {
             _MapRenderer.RenderField(command.AtX, command.AtY);
             _FormRenderer.Render(_HelpForm);
         }
 
-        private void RenderOverlay(Overlay overlay)
+        private static void RenderOverlay(Overlay overlay)
         {
             _MapRenderer.RenderOverlay(overlay);
         }
 
-        private void HideOverlay(Overlay overlay)
+        private static void HideOverlay(Overlay overlay)
         {
             _MapRenderer.HideOverlay(overlay);
         }

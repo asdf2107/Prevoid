@@ -98,6 +98,10 @@ namespace Prevoid.Model
                 ? GameState.Movement : GameState.Attack;
             SelectedUnit = null;
             HasTurnEnded = true;
+
+            if (GameMode == GameMode.PvP)
+                Map.ResetSelection();
+
             TurnEnded?.Invoke(new TurnEndedEventArgs(CommandManager.TurnCommands, sendCommands));
 
             if (skipTurnEndedWait)
