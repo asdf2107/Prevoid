@@ -27,8 +27,8 @@ class Program
         catch (PlatformNotSupportedException) { }
 #pragma warning restore CA1416
 
-        NetworkManager.StartOnline();
-        //CommandManager.HandleCommand(new Model.Commands.GenMapCommand(GM.Random.Next()));
+        //NetworkManager.StartOnline();
+        CommandManager.HandleCommand(new Model.Commands.GenMapCommand(GM.Random.Next()));
 
         _ = RenderHandler.StartRenderingAsync();
 
